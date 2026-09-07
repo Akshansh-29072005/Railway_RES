@@ -1,126 +1,147 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { STATIONS, TRACK_PATH, RESTRICTIONS } from '../data/corridorData';
+import { getSimulator } from '../services/telemetrySimulator';
 
-const stations = [
-  { name: "Raipur Jn", lat: 21.25646, lng: 81.62933, color: "#ef4444" },
-  { name: "Bhatapara", lat: 21.73246, lng: 81.94606, color: "#ef4444" },
-  { name: "Tilda-Neora", lat: 21.55073, lng: 81.79459, color: "#ef4444" },
-  { name: "Durg", lat: 21.19678, lng: 81.28458, color: "#ef4444" },
-  { name: "Mandir Hasaud", lat: 21.22619, lng: 81.77281, color: "#10b981" },
-  { name: "Lakholi", lat: 21.20183, lng: 81.89065, color: "#10b981" },
-  { name: "Kendri", lat: 21.11000, lng: 81.54900, color: "#f97316" },
-  { name: "Abhanpur", lat: 21.01500, lng: 81.60300, color: "#f97316" },
-  { name: "Dhamtari", lat: 20.71200, lng: 81.54500, color: "#f97316" },
-  { name: "Rajim", lat: 20.99100, lng: 81.74300, color: "#f97316" },
-  { name: "Dalli Rajhara", lat: 20.90800, lng: 81.16400, color: "#3b82f6" },
-  { name: "Taroki", lat: 20.28700, lng: 80.88300, color: "#3b82f6" },
-  { name: "Bilaspur", lat: 22.079, lng: 82.139, color: "#ef4444" },
-];
-
-const getFeatureStyle = (feature) => {
-  let color = '#ffffff';
-  let weight = 4;
-  let opacity = 0.8;
-  let dashArray = '5, 10';
-
-  if (feature.geometry && feature.geometry.coordinates) {
-    const coords = feature.geometry.type === 'LineString' 
-      ? feature.geometry.coordinates[0] 
-      : feature.geometry.type === 'MultiLineString' 
-        ? feature.geometry.coordinates[0][0] 
-        : null;
-        
-    if (coords && Array.isArray(coords)) {
-      const lng = coords[0];
-      const lat = coords[1];
-      
-      // Corridor 3 (Green) - Raipur to Lakholi
-      if (lat >= 21.18 && lat <= 21.26 && lng >= 81.62 && lng <= 81.90) {
-        color = '#10b981'; weight = 5; opacity = 1; dashArray = null;
-      }
-      // Corridor 4 (Orange) - Kendri to Dhamtari / Rajim
-      else if (lat >= 20.70 && lat <= 21.12 && lng >= 81.50 && lng <= 81.75) {
-        color = '#f97316'; weight = 5; opacity = 1; dashArray = null;
-      }
-      // Corridor 2 (Blue) - Durg to Taroki
-      else if (lat >= 20.25 && lat <= 21.19 && lng >= 80.80 && lng <= 81.35) {
-        color = '#3b82f6'; weight = 5; opacity = 1; dashArray = null;
-      }
-      // Corridor 1 (Red) - Bilaspur to Durg
-      else if (lat >= 21.19 && lat <= 22.20 && lng >= 81.20 && lng <= 82.20) {
-        color = '#ef4444'; weight = 5; opacity = 1; dashArray = null;
-      }
-    }
-  }
-
-  return { color, weight, opacity, dashArray };
+// Signal aspect colors
+const SIGNAL_COLORS = {
+  GREEN: '#10b981',
+  DOUBLE_YELLOW: '#f59e0b',
+  YELLOW: '#eab308',
+  RED: '#ef4444',
 };
 
+// Train delay → color
+function getDelayColor(delay) {
+  if (delay <= 0) return '#10b981'; // On time - green
+  if (delay <= 10) return '#eab308'; // Slight delay - yellow
+  if (delay <= 20) return '#f97316'; // Moderate - orange
+  return '#ef4444'; // Heavy delay - red
+}
+
 const MapComponent = () => {
-  const mapContainerRef = useRef(null);
+  const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const trainMarkersRef = useRef({});
+  const signalMarkersRef = useRef({});
+  const trainPopupRef = useRef(null);
+  const [selectedTrain, setSelectedTrain] = useState(null);
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!mapRef.current || mapInstanceRef.current) return;
 
-    if (!mapInstanceRef.current) {
-      const map = L.map(mapContainerRef.current, {
-        center: [21.25, 81.63],
-        zoom: 9,
-        scrollWheelZoom: true,
-        preferCanvas: true
-      });
+    // ── Initialize Map ──────────────────────────────────────
+    const map = L.map(mapRef.current, {
+      center: [21.23, 81.45],
+      zoom: 11,
+      scrollWheelZoom: true,
+      zoomControl: true,
+      attributionControl: false,
+    });
 
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: '&copy; Esri',
-        maxZoom: 19
-      }).addTo(map);
+    // Dark satellite tile layer
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+    }).addTo(map);
 
-      // Add Station Circle Markers with Tooltips
-      stations.forEach(station => {
-        const marker = L.circleMarker([station.lat, station.lng], {
-          radius: 6,
-          color: '#ffffff',
-          fillColor: station.color,
-          fillOpacity: 1,
-          weight: 2
+    // ── Draw Track Polyline ─────────────────────────────────
+    L.polyline(TRACK_PATH, {
+      color: '#ffffff',
+      weight: 3,
+      opacity: 0.6,
+      dashArray: '8, 6',
+    }).addTo(map);
+
+    // ── Draw TSR/PSR Zones ──────────────────────────────────
+    RESTRICTIONS.forEach(r => {
+      const startFrac = r.fromKm / 40;
+      const endFrac = r.toKm / 40;
+      const startIdx = Math.floor(startFrac * (TRACK_PATH.length - 1));
+      const endIdx = Math.ceil(endFrac * (TRACK_PATH.length - 1));
+      const segment = TRACK_PATH.slice(
+        Math.max(0, startIdx),
+        Math.min(TRACK_PATH.length, endIdx + 1)
+      );
+      if (segment.length >= 2) {
+        L.polyline(segment, {
+          color: r.type === 'TSR' ? '#f59e0b' : '#3b82f6',
+          weight: 6,
+          opacity: 0.7,
+          dashArray: '12, 8',
         }).addTo(map);
 
-        marker.bindTooltip(`<span style="font-weight:bold; font-size:12px; color:#0f172a; padding: 2px 4px;">${station.name}</span>`, {
-          permanent: true,
-          direction: 'right',
-          offset: [10, 0],
-          opacity: 1
-        });
-      });
+        // TSR label
+        const midIdx = Math.floor(segment.length / 2);
+        L.marker(segment[midIdx], {
+          icon: L.divIcon({
+            className: '',
+            html: `<div style="background:${r.type === 'TSR' ? '#f59e0b' : '#3b82f6'};color:#000;font-size:10px;font-weight:bold;padding:2px 6px;border-radius:4px;white-space:nowrap;">${r.speedLimit} km/h ${r.type}</div>`,
+            iconSize: [80, 20],
+            iconAnchor: [40, 30],
+          }),
+        }).addTo(map);
+      }
+    });
 
-      // Fetch GeoJSON data
-      fetch('/data.geojson')
-        .then(response => response.json())
-        .then(data => {
-          if (data) {
-            L.geoJSON(data, {
-              style: getFeatureStyle
-            }).addTo(map);
+    // ── Draw Station Markers ────────────────────────────────
+    STATIONS.forEach(station => {
+      const isJunction = station.isJunction;
+      const size = isJunction ? 14 : 10;
+      const borderColor = isJunction ? '#f59e0b' : '#ffffff';
 
-            map.fitBounds([
-              [20.2, 80.8],
-              [22.2, 82.2]
-            ]);
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('GeoJSON loading error:', err);
-          setLoading(false);
-        });
+      // Station dot
+      L.circleMarker([station.lat, station.lng], {
+        radius: size / 2,
+        color: borderColor,
+        fillColor: '#1e293b',
+        fillOpacity: 1,
+        weight: 2,
+      }).addTo(map);
 
-      mapInstanceRef.current = map;
-    }
+      // Station label
+      const labelHtml = `
+        <div style="
+          background: rgba(15, 23, 42, 0.9);
+          border: 1px solid ${isJunction ? '#f59e0b' : '#475569'};
+          border-radius: 6px;
+          padding: 4px 8px;
+          color: ${isJunction ? '#f59e0b' : '#e2e8f0'};
+          font-size: ${isJunction ? '12px' : '10px'};
+          font-weight: ${isJunction ? '700' : '500'};
+          white-space: nowrap;
+          font-family: 'Inter', sans-serif;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        ">
+          ${station.code} · ${station.name}
+          <span style="display:block;font-size:9px;color:#94a3b8;font-weight:400;">
+            km ${station.km} · ${station.platforms} PF${isJunction ? ' · Jn' : ''}
+          </span>
+        </div>
+      `;
+      L.marker([station.lat, station.lng], {
+        icon: L.divIcon({
+          className: '',
+          html: labelHtml,
+          iconSize: [140, 40],
+          iconAnchor: [-12, 20],
+        }),
+      }).addTo(map);
+    });
+
+    mapInstanceRef.current = map;
+
+    // ── Subscribe to Simulator ──────────────────────────────
+    const sim = getSimulator();
+    sim.start();
+
+    const unsubscribe = sim.subscribe((state) => {
+      updateTrainMarkers(map, state);
+      updateSignalMarkers(map, state);
+    });
 
     return () => {
+      unsubscribe();
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -128,27 +149,149 @@ const MapComponent = () => {
     };
   }, []);
 
-  return (
-    <div className="map-wrapper" style={{ position: 'relative', width: '100%', height: '100%', minHeight: '550px' }}>
-      {loading && (
-        <div className="loading-overlay" style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(15, 23, 42, 0.8)',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          color: '#ffffff', zIndex: 2000
-        }}>
-          <div className="spinner" style={{
-            width: '40px', height: '40px',
-            border: '4px solid rgba(255,255,255,0.2)',
-            borderTopColor: '#3b82f6', borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-          <p style={{ marginTop: '16px', fontWeight: 'bold' }}>Loading Track Data...</p>
+  // ── Update Train Markers ────────────────────────────────────
+  function updateTrainMarkers(map, state) {
+    const activeTrains = state.trains.filter(
+      t => t.status === 'RUNNING' || t.status === 'AT_STATION'
+    );
+
+    // Remove markers for trains no longer active
+    Object.keys(trainMarkersRef.current).forEach(tn => {
+      if (!activeTrains.find(t => t.trainNumber === tn)) {
+        map.removeLayer(trainMarkersRef.current[tn]);
+        delete trainMarkersRef.current[tn];
+      }
+    });
+
+    // Update or create markers
+    activeTrains.forEach(train => {
+      if (train.currentLat === 0 && train.currentLng === 0) return;
+      const delayColor = getDelayColor(train.delayMinutes);
+      const dirArrow = train.direction === 'DN' ? '▶' : '◀';
+      
+      const html = `
+        <div style="position:relative;cursor:pointer;" title="${train.trainNumber} ${train.trainName}">
+          <div style="
+            width: 28px; height: 28px;
+            background: ${train.color};
+            border: 3px solid ${delayColor};
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: bold; color: #fff;
+            box-shadow: 0 0 12px ${delayColor}88, 0 0 24px ${train.color}44;
+            animation: pulse 2s infinite;
+          ">${dirArrow}</div>
+          <div style="
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            background: ${train.color}; color: #fff;
+            font-size: 9px; font-weight: bold; padding: 1px 5px;
+            border-radius: 3px; white-space: nowrap;
+            font-family: monospace;
+          ">${train.trainNumber}</div>
         </div>
-      )}
-      <div ref={mapContainerRef} style={{ width: '100%', height: '100%', minHeight: '550px', borderRadius: '8px' }} />
+      `;
+
+      if (trainMarkersRef.current[train.trainNumber]) {
+        trainMarkersRef.current[train.trainNumber].setLatLng([train.currentLat, train.currentLng]);
+        trainMarkersRef.current[train.trainNumber].setIcon(
+          L.divIcon({ className: '', html, iconSize: [28, 28], iconAnchor: [14, 14] })
+        );
+      } else {
+        const marker = L.marker([train.currentLat, train.currentLng], {
+          icon: L.divIcon({ className: '', html, iconSize: [28, 28], iconAnchor: [14, 14] }),
+          zIndexOffset: 1000,
+        }).addTo(map);
+
+        // Click popup
+        marker.on('click', () => {
+          const nextEta = Object.values(train.etas)[0];
+          const popupHtml = `
+            <div style="font-family:'Inter',sans-serif;min-width:220px;padding:4px;">
+              <div style="font-weight:700;font-size:14px;color:${train.color};margin-bottom:4px;">
+                ${train.trainNumber} · ${train.trainName}
+              </div>
+              <div style="font-size:11px;color:#666;margin-bottom:8px;">${train.origin} → ${train.destination} · ${train.trainType}</div>
+              <table style="width:100%;font-size:11px;border-collapse:collapse;">
+                <tr><td style="color:#888;">Speed</td><td style="font-weight:600;">${Math.round(train.currentSpeed)} km/h</td></tr>
+                <tr><td style="color:#888;">Delay</td><td style="font-weight:600;color:${delayColor};">${train.delayMinutes > 0 ? '+' + train.delayMinutes + ' min' : 'On Time'}</td></tr>
+                <tr><td style="color:#888;">Block</td><td style="font-weight:600;">${train.blockSection}</td></tr>
+                <tr><td style="color:#888;">Status</td><td style="font-weight:600;">${train.status === 'AT_STATION' ? '🛑 At Station' : '🚂 Running'}</td></tr>
+                ${nextEta ? `
+                  <tr><td colspan="2" style="padding-top:6px;border-top:1px solid #eee;"></td></tr>
+                  <tr><td style="color:#888;">Next Station</td><td style="font-weight:600;">${nextEta.stationName}</td></tr>
+                  <tr><td style="color:#888;">ML ETA</td><td style="font-weight:600;">${nextEta.mlStr}</td></tr>
+                  <tr><td style="color:#888;">Confidence</td><td style="font-weight:600;">${nextEta.confidencePercent}% ±${nextEta.uncertainty}m</td></tr>
+                  <tr><td style="color:#888;">Platform</td><td style="font-weight:600;">PF ${nextEta.platform || '—'}</td></tr>
+                ` : ''}
+              </table>
+            </div>
+          `;
+          marker.bindPopup(popupHtml, { maxWidth: 280 }).openPopup();
+        });
+
+        trainMarkersRef.current[train.trainNumber] = marker;
+      }
+    });
+  }
+
+  // ── Update Signal Markers ───────────────────────────────────
+  function updateSignalMarkers(map, state) {
+    state.signals.forEach(sig => {
+      const color = SIGNAL_COLORS[sig.aspect] || SIGNAL_COLORS.GREEN;
+      const glowColor = sig.aspect === 'RED' ? '#ef444488' : sig.aspect === 'YELLOW' ? '#eab30888' : '#10b98144';
+
+      if (signalMarkersRef.current[sig.id]) {
+        signalMarkersRef.current[sig.id].setIcon(
+          L.divIcon({
+            className: '',
+            html: `<div style="width:10px;height:10px;background:${color};border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 8px ${glowColor};"></div>`,
+            iconSize: [10, 10],
+            iconAnchor: [5, 5],
+          })
+        );
+      } else {
+        const marker = L.marker([sig.lat, sig.lng], {
+          icon: L.divIcon({
+            className: '',
+            html: `<div style="width:10px;height:10px;background:${color};border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 8px ${glowColor};"></div>`,
+            iconSize: [10, 10],
+            iconAnchor: [5, 5],
+          }),
+          zIndexOffset: 500,
+        }).addTo(map);
+
+        marker.bindTooltip(`${sig.id} (km ${sig.km})`, {
+          direction: 'top',
+          offset: [0, -8],
+          opacity: 0.9,
+        });
+
+        signalMarkersRef.current[sig.id] = marker;
+      }
+    });
+  }
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '500px' }}>
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.15); opacity: 0.85; }
+        }
+        .leaflet-container { background: #0f172a !important; }
+        .leaflet-control-zoom { border: none !important; }
+        .leaflet-control-zoom a {
+          background: #1e293b !important;
+          color: #e2e8f0 !important;
+          border-color: #334155 !important;
+        }
+        .leaflet-control-zoom a:hover { background: #334155 !important; }
+        .leaflet-popup-content-wrapper {
+          border-radius: 10px !important;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.25) !important;
+        }
+      `}</style>
+      <div ref={mapRef} style={{ width: '100%', height: '100%', minHeight: '500px' }} />
     </div>
   );
 };

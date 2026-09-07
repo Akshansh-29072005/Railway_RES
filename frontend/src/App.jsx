@@ -7,6 +7,10 @@ import RouteMatrix from './components/RouteMatrix';
 import ArchitectureShowcase from './components/ArchitectureShowcase';
 import SecurityNotice from './components/SecurityNotice';
 import VisualizeMap from './components/VisualizeMap';
+import StationDisplay from './components/StationDisplay';
+import ControlRoomView from './components/ControlRoomView';
+import PassengerAppView from './components/PassengerAppView';
+import B2BWebhookView from './components/B2BWebhookView';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -36,14 +40,22 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  // Full-screen views (no footer, no hero)
+  const fullScreenViews = ['visualize', 'station-ntes', 'control-room', 'passenger-app', 'b2b-webhooks'];
+  const isFullScreen = fullScreenViews.includes(activeNav);
+
   return (
     <div className="min-h-screen bg-surface font-body-md text-on-surface antialiased flex flex-col">
       <Header activeNav={activeNav} setActiveNav={setActiveNav} />
 
       <main className="w-full pt-[144px] bg-surface min-h-[calc(100vh-140px)] flex-1">
-        {activeNav === 'visualize' ? (
-          <VisualizeMap />
-        ) : (
+        {activeNav === 'visualize' && <VisualizeMap />}
+        {activeNav === 'station-ntes' && <StationDisplay />}
+        {activeNav === 'control-room' && <ControlRoomView />}
+        {activeNav === 'passenger-app' && <PassengerAppView />}
+        {activeNav === 'b2b-webhooks' && <B2BWebhookView />}
+        
+        {!isFullScreen && (
           <div className="flex flex-col w-full">
             <HeroBanner onOpenAuth={handleOpenAuth} onDownloadDocs={handleDownloadDocs} />
             
@@ -62,7 +74,7 @@ export default function App() {
         )}
       </main>
 
-      <Footer />
+      {!isFullScreen && <Footer />}
     </div>
   );
 }

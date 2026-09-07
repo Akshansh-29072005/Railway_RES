@@ -23,9 +23,10 @@ export default function Header({ activeNav, setActiveNav }) {
 
   const navItems = [
     { id: 'api-console', label: 'API Console & Live Tester' },
-    { id: 'control-room', label: 'Control Room Real-Time Feeds' },
-    { id: 'station-ntes', label: 'Station NTES Display Feeds' },
-    { id: 'passenger-webhook', label: 'Passenger & B2B Webhook Gateway' },
+    { id: 'control-room', label: 'Control Room & Signals' },
+    { id: 'station-ntes', label: 'Station NTES Display' },
+    { id: 'passenger-app', label: 'Passenger App (IRCTC)' },
+    { id: 'b2b-webhooks', label: 'B2B Webhooks' },
     { id: 'sla-latency', label: 'SLA & Latency Telemetry' },
     { id: 'visualize', label: 'Visualize' }
   ];
