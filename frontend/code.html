@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Indian Railways RES - Real-Time ETA System</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-container-lowest": "#ffffff",
+          "primary-fixed-dim": "#acc7ff",
+          "surface-container-high": "#dce9ff",
+          "on-tertiary-fixed": "#00201d",
+          "surface-dim": "#ccdbf3",
+          "surface-tint": "#425e92",
+          "primary-fixed": "#d7e2ff",
+          "primary-container": "#163668",
+          "on-error": "#ffffff",
+          "tertiary-fixed": "#89f5e7",
+          "secondary-fixed": "#ffdbcf",
+          "surface-bright": "#f8f9ff",
+          "outline": "#747780",
+          "on-background": "#0d1c2e",
+          "tertiary-fixed-dim": "#6bd8cb",
+          "on-primary": "#ffffff",
+          "secondary-fixed-dim": "#ffb59a",
+          "on-tertiary-fixed-variant": "#005049",
+          "on-error-container": "#93000a",
+          "on-tertiary": "#ffffff",
+          "surface": "#f8f9ff",
+          "on-secondary-container": "#531800",
+          "on-primary-container": "#84a0d9",
+          "error": "#ba1a1a",
+          "tertiary": "#002723",
+          "inverse-primary": "#acc7ff",
+          "surface-container-low": "#eff4ff",
+          "on-surface-variant": "#44474f",
+          "surface-container": "#e6eeff",
+          "tertiary-container": "#003f39",
+          "secondary": "#a83900",
+          "on-secondary-fixed": "#380d00",
+          "on-tertiary-container": "#3fb1a5",
+          "inverse-on-surface": "#eaf1ff",
+          "on-primary-fixed": "#001a40",
+          "on-secondary-fixed-variant": "#802a00",
+          "on-secondary": "#ffffff",
+          "surface-variant": "#d5e3fc",
+          "primary": "#00204c",
+          "on-surface": "#0d1c2e",
+          "inverse-surface": "#233144",
+          "secondary-container": "#fc6018",
+          "on-primary-fixed-variant": "#294679",
+          "background": "#f8f9ff",
+          "surface-container-highest": "#d5e3fc",
+          "error-container": "#ffdad6",
+          "outline-variant": "#c4c6d0"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "space-48": "3rem",
+          "space-24": "1.5rem",
+          "space-16": "1rem",
+          "space-4": "0.25rem",
+          "space-32": "2rem",
+          "margin-edge": "1.5rem",
+          "space-8": "0.5rem",
+          "space-20": "1.25rem",
+          "gutter": "1rem",
+          "space-2": "0.125rem",
+          "space-12": "0.75rem",
+          "space-64": "4rem"
+        },
+        "fontFamily": {
+          "label-md": [
+            "JetBrains Mono"
+          ],
+          "label-lg": [
+            "JetBrains Mono"
+          ],
+          "headline-md": [
+            "Inter"
+          ],
+          "body-sm": [
+            "Inter"
+          ],
+          "code-block": [
+            "JetBrains Mono"
+          ],
+          "body-lg": [
+            "Inter"
+          ],
+          "headline-sm": [
+            "Inter"
+          ],
+          "label-sm": [
+            "JetBrains Mono"
+          ],
+          "headline-lg": [
+            "Inter"
+          ],
+          "headline-xl": [
+            "Inter"
+          ],
+          "body-md": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "fontWeight": "500"
+            }
+          ],
+          "label-lg": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "fontWeight": "500"
+            }
+          ],
+          "headline-md": [
+            "20px",
+            {
+              "lineHeight": "28px",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "fontWeight": "400"
+            }
+          ],
+          "code-block": [
+            "13px",
+            {
+              "lineHeight": "20px",
+              "fontWeight": "400"
+            }
+          ],
+          "body-lg": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "fontWeight": "600"
+            }
+          ],
+          "label-sm": [
+            "10px",
+            {
+              "lineHeight": "14px",
+              "fontWeight": "500"
+            }
+          ],
+          "headline-lg": [
+            "24px",
+            {
+              "lineHeight": "32px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "700"
+            }
+          ],
+          "headline-xl": [
+            "32px",
+            {
+              "lineHeight": "40px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-md": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 w-full z-50 shadow-[0_1px_8px_rgba(0,0,0,0.06)]"><div class="h-8 w-full bg-surface-container-low px-margin-edge flex items-center justify-between text-on-surface-variant border-b border-outline-variant/30"><div class="flex items-center gap-space-16"><div class="flex items-center gap-space-8"><span class="material-symbols-outlined text-[14px] text-primary">flag</span><span class="font-label-sm text-label-sm tracking-wide text-primary font-semibold uppercase">Government of India | Ministry of Railways | CRIS</span></div><span class="hidden md:inline-block text-outline-variant">|</span><div class="hidden md:flex items-center gap-space-8"><span class="material-symbols-outlined text-[14px] text-secondary">schedule</span><span class="font-label-sm text-label-sm tracking-wider text-on-surface font-medium">26-OCT-2024 [14:48:32 IST]</span></div></div><div class="flex items-center gap-space-16"><div class="flex items-center gap-space-4"><button class="font-label-sm text-label-sm px-space-8 py-space-2 bg-surface hover:bg-surface-container text-on-surface rounded-DEFAULT transition-colors" type="button">A-</button><button class="font-label-sm text-label-sm px-space-8 py-space-2 bg-surface hover:bg-surface-container text-on-surface rounded-DEFAULT transition-colors font-bold" type="button">A</button><button class="font-label-sm text-label-sm px-space-8 py-space-2 bg-surface hover:bg-surface-container text-on-surface rounded-DEFAULT transition-colors font-bold" type="button">A+</button></div><span class="text-outline-variant">|</span><div class="flex items-center font-label-sm text-label-sm gap-space-8"><button class="text-on-surface hover:text-secondary transition-colors" type="button">हिंदी</button><span class="text-outline-variant">/</span><button class="text-primary font-bold" type="button">English</button></div></div></div><div class="h-16 w-full bg-surface px-margin-edge flex items-center justify-between gap-space-16"><div class="flex items-center gap-space-16"><img alt="Railway RES Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X3OdJG7vP5PJDQu5bKkKXJvxTjqggfBGETpwjAtMAHQjSf7VB1jnXwi794PYHMo76Auv5PXc4cStduIpFRVJG3phcLLM9QqmyxilIsWoY6ZoTHqLduBi9MAIDmJ68Mnw5nPgQ-_2mpEXWRP2q2JUUslTDi4FJNyhEgAM6OMUuazTF8aDuNu8Nh8cQ0M3d-53Z778pXsMuusB77PH-zkg9E55SWNxZVqRuzhFK976I31tJEiDsafpe8Gfh9"/><div class="flex flex-col"><div class="flex items-center gap-space-8"><span class="font-headline-sm text-headline-sm tracking-tight text-primary font-bold">INDIAN RAILWAYS RES</span><span class="font-label-sm text-label-sm uppercase bg-surface-container text-primary px-space-8 py-space-2 rounded-DEFAULT tracking-wider font-semibold">CRIS Core</span></div><span class="font-body-sm text-body-sm text-on-surface-variant">Real-Time Train ETA &amp; Telemetry Platform</span></div></div><div class="hidden lg:flex items-center gap-space-16"><div class="flex items-center gap-space-8 bg-surface-container-low px-space-12 py-space-8 rounded-DEFAULT"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary-container opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-tertiary-container"></span></span><span class="font-label-sm text-label-sm text-on-surface font-semibold uppercase tracking-wider">Control Room Live Telemetry</span></div><div class="flex items-center gap-space-8 bg-surface-container-low px-space-12 py-space-8 rounded-DEFAULT"><span class="material-symbols-outlined text-[16px] text-primary">dns</span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Cluster:</span><span class="font-label-sm text-label-sm text-primary font-bold">CRIS Production Cluster 04 (NDLS)</span></div></div><div class="flex items-center gap-space-16"><a class="hidden sm:flex items-center gap-space-4 font-label-md text-label-md text-primary hover:text-secondary transition-colors" href="#"><span class="material-symbols-outlined text-[16px]">terminal</span><span>API Docs</span></a><div class="flex items-center gap-space-12 pl-space-16"><div class="text-right hidden sm:flex flex-col"><span class="font-label-sm text-label-sm font-semibold text-on-surface">Er. Rajesh K. Varma</span><span class="font-label-sm text-label-sm text-on-surface-variant">Chief Operations Officer (NOC)</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAefAt3Kd1w1xpCq1jAeMnOM25tQwwcIx-UTjD0e8ptrR7v9DGYnd7FNfU9AzcLoaUefvPDAL6AV2hMnh925X33NK8-ZwFkzuoGM5KbXV20uQNYkDhTyAWeGTXLMW-juzCszGTJJzSwzXOk10b2yZVqxvHvL9gNQ2ujVvCsWGPIbbUT_vzd5IdiXWRdKk-CMzCKLSnzQ5IDDVoK0J5Rp0F3EPZuC_Ni1mcABfK5_8w-iAJh6Cb9gGIZLg"/></div></div></div><div class="h-12 w-full bg-primary px-margin-edge flex items-center justify-between"><nav class="flex items-center gap-space-4 h-full overflow-x-auto" data-active-classes="bg-primary-container text-on-primary font-bold"><a class="h-full px-space-16 flex items-center font-label-md text-label-md text-on-primary-container hover:bg-primary-container hover:text-on-primary transition-colors whitespace-nowrap" data-path="api-console-and-live-tester" href="#">API Console &amp; Live Tester</a><a class="h-full px-space-16 flex items-center font-label-md text-label-md text-on-primary-container hover:bg-primary-container hover:text-on-primary transition-colors whitespace-nowrap" data-path="control-room-real-time-feeds" href="#">Control Room Real-Time Feeds</a><a class="h-full px-space-16 flex items-center font-label-md text-label-md text-on-primary-container hover:bg-primary-container hover:text-on-primary transition-colors whitespace-nowrap" data-path="station-ntes-display-feeds" href="#">Station NTES Display Feeds</a><a class="h-full px-space-16 flex items-center font-label-md text-label-md text-on-primary-container hover:bg-primary-container hover:text-on-primary transition-colors whitespace-nowrap" data-path="passenger-and-b2b-webhook-gateway" href="#">Passenger &amp; B2B Webhook Gateway</a><a class="h-full px-space-16 flex items-center font-label-md text-label-md text-on-primary-container hover:bg-primary-container hover:text-on-primary transition-colors whitespace-nowrap" data-path="sla-and-latency-telemetry" href="#">SLA &amp; Latency Telemetry</a></nav><div class="hidden md:flex items-center gap-space-8 text-on-primary"><span class="material-symbols-outlined text-[16px] text-tertiary-fixed">sensors</span><span class="font-label-sm text-label-sm text-tertiary-fixed font-mono font-medium">FEED FREQ: 250ms</span></div></div><div class="h-9 w-full bg-secondary text-on-secondary px-margin-edge flex items-center justify-between"><div class="flex items-center gap-space-8"><span class="material-symbols-outlined text-[15px]">campaign</span><span class="font-label-sm text-label-sm tracking-wide font-medium">Railway RES Beta: Sub-second GNSS Train Tracking &amp; Predictive Station Arrival APIs v2.4 Active</span></div><div class="hidden sm:flex items-center gap-space-12 font-label-sm text-label-sm"><span class="font-mono">SYSTEM BUILD: 2024.10-STABLE</span><span class="bg-on-secondary/20 px-space-8 py-space-2 rounded-DEFAULT uppercase tracking-wider font-semibold">Telemetry Online</span></div></div></header><main class="w-full pt-[188px] bg-surface min-h-[calc(100vh-140px)]"><div class="flex flex-col w-full">
+<!-- Top Mission Control Hero Banner -->
+<section class="w-full bg-primary-container text-on-primary py-space-32 px-margin-edge shadow-md relative overflow-hidden">
+<div class="absolute right-0 top-0 w-96 h-full opacity-10 pointer-events-none flex items-center justify-center">
+<span class="material-symbols-outlined text-[320px] select-none text-white">train</span>
+</div>
+<div class="max-w-7xl mx-auto flex flex-col gap-space-20 relative z-10">
+<div class="flex flex-wrap items-center justify-between gap-space-16">
+<div class="flex flex-col gap-space-4">
+<div class="flex items-center gap-space-8">
+<span class="bg-secondary px-space-8 py-space-2 font-label-sm text-label-sm font-bold uppercase rounded-DEFAULT tracking-wider text-on-secondary">CRIS Telemetry Gateway</span>
+<span class="font-label-sm text-label-sm text-primary-fixed-dim font-mono">SPEC: REST / gRPC / WebSocket v2.4</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl font-bold tracking-tight text-white">
+            RAILWAY RES — REAL-TIME ETA &amp; TELEMETRY API ENGINE
+          </h1>
+<p class="font-body-md text-body-md text-primary-fixed max-w-4xl leading-relaxed">
+            Official CRIS &amp; IRCTC Enterprise Data Gateway for Live Train Tracking, Predictive Station ETAs, Automated Platform Allocation, and High-Throughput Dissemination across National Rail Corridors.
+          </p>
+</div>
+<div class="flex items-center gap-space-12">
+<button class="bg-surface-container-lowest text-primary font-headline-sm text-headline-sm px-space-16 py-space-8 rounded-DEFAULT font-semibold shadow-sm hover:bg-surface-container transition-all flex items-center gap-space-8" id="auth-spec-btn">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span>mTLS / OAuth2 Portal</span>
+</button>
+<button class="bg-secondary-container text-white font-headline-sm text-headline-sm px-space-16 py-space-8 rounded-DEFAULT font-semibold shadow-sm hover:bg-secondary transition-all flex items-center gap-space-8" id="docs-download-btn">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download OpenAPI 3.1</span>
+</button>
+</div>
+</div>
+<!-- Real-Time Operational KPI Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-16 pt-space-8">
+<div class="bg-surface-container-lowest p-space-16 rounded-DEFAULT shadow-sm text-on-surface flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Active Tracked Trains</span>
+<span class="material-symbols-outlined text-[20px] text-tertiary-container">satellite_alt</span>
+</div>
+<div class="mt-space-8 flex items-baseline gap-space-8">
+<span class="font-headline-xl text-headline-xl font-bold text-primary font-mono" id="tracked-counter">13,420</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Locos</span>
+</div>
+<div class="mt-space-4 flex items-center gap-space-4">
+<span class="h-2 w-2 rounded-full bg-emerald-600 inline-block animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-emerald-700 font-medium">100% RTIS GNSS Locked</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-16 rounded-DEFAULT shadow-sm text-on-surface flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">ETA Prediction Variance</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">timer</span>
+</div>
+<div class="mt-space-8 flex items-baseline gap-space-8">
+<span class="font-headline-xl text-headline-xl font-bold text-secondary font-mono">±42s</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tolerance</span>
+</div>
+<div class="mt-space-4 flex items-center gap-space-4 text-outline">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant">ML Geo-Fence Engine v3.1</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-16 rounded-DEFAULT shadow-sm text-on-surface flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">API Throughput</span>
+<span class="material-symbols-outlined text-[20px] text-primary">speed</span>
+</div>
+<div class="mt-space-8 flex items-baseline gap-space-8">
+<span class="font-headline-xl text-headline-xl font-bold text-primary font-mono">48,200</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">req / sec</span>
+</div>
+<div class="mt-space-4 flex items-center gap-space-4 text-emerald-700">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span class="font-label-sm text-label-sm font-medium">Peak Tatkal Handling Active</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-16 rounded-DEFAULT shadow-sm text-on-surface flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">P99 Edge Latency</span>
+<span class="material-symbols-outlined text-[20px] text-tertiary-container">hub</span>
+</div>
+<div class="mt-space-8 flex items-baseline gap-space-8">
+<span class="font-headline-xl text-headline-xl font-bold text-tertiary-container font-mono">18ms</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Edge CDN</span>
+</div>
+<div class="mt-space-4 flex items-center gap-space-4 text-outline">
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant">Cluster: NDLS / CSTM / HWH</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Filter Strip (IRCTC Tabs) -->
+<div class="w-full bg-surface-container-low px-margin-edge py-space-12 shadow-sm">
+<div class="max-w-7xl mx-auto flex items-center justify-between gap-space-16 overflow-x-auto">
+<div class="flex items-center gap-space-8 whitespace-nowrap" id="tab-container">
+<button class="tab-btn px-space-16 py-space-8 font-label-md text-label-md rounded-DEFAULT font-bold bg-primary text-on-primary shadow-sm transition-colors" data-category="all">
+          All APIs (12)
+        </button>
+<button class="tab-btn px-space-16 py-space-8 font-label-md text-label-md rounded-DEFAULT font-medium bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors" data-category="control-room">
+          Control Room &amp; Signals
+        </button>
+<button class="tab-btn px-space-16 py-space-8 font-label-md text-label-md rounded-DEFAULT font-medium bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors" data-category="station-ntes">
+          Station Master &amp; NTES Displays
+        </button>
+<button class="tab-btn px-space-16 py-space-8 font-label-md text-label-md rounded-DEFAULT font-medium bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors" data-category="passenger">
+          Passenger Apps (IRCTC)
+        </button>
+<button class="tab-btn px-space-16 py-space-8 font-label-md text-label-md rounded-DEFAULT font-medium bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors" data-category="b2b">
+          B2B Webhooks (OTAs &amp; Transit)
+        </button>
+</div>
+<div class="hidden md:flex items-center gap-space-8">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-medium">Protocol Filter:</span>
+<span class="font-label-sm text-label-sm bg-surface px-space-8 py-space-4 font-mono font-bold text-primary rounded-DEFAULT">HTTP/2</span>
+<span class="font-label-sm text-label-sm bg-surface px-space-8 py-space-4 font-mono font-bold text-primary rounded-DEFAULT">WSS</span>
+</div>
+</div>
+</div>
+<!-- Interactive Live API Explorer & Real-Time Viewer Grid -->
+<main class="w-full px-margin-edge py-space-32">
+<div class="max-w-7xl mx-auto flex flex-col gap-space-32">
+<!-- Split Console -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-24">
+<!-- Left: Endpoint Explorer & Parameters (5 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-16">
+<div class="bg-surface-container-lowest p-space-20 rounded-DEFAULT shadow-sm flex flex-col gap-space-16">
+<div class="flex items-center justify-between pb-space-8">
+<div class="flex items-center gap-space-8">
+<span class="material-symbols-outlined text-[20px] text-primary">terminal</span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary">API Endpoint Builder</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">v2.4 STABLE</span>
+</div>
+<!-- Active Endpoint Selector Dropdown / Pills -->
+<div class="flex flex-col gap-space-8">
+<label class="font-label-sm text-label-sm font-semibold uppercase text-on-surface-variant">Active Operations Route</label>
+<div class="flex items-center gap-space-8 p-space-8 bg-surface-container-low rounded-DEFAULT">
+<span class="bg-emerald-700 text-white font-label-sm text-label-sm font-bold px-space-8 py-space-4 rounded-DEFAULT">GET</span>
+<span class="font-code-block text-code-block font-mono text-primary font-semibold truncate flex-1" id="active-endpoint-path">/api/v2.4/eta/live-train-position</span>
+</div>
+</div>
+<!-- Parameter Form -->
+<div class="flex flex-col gap-space-12 pt-space-8">
+<span class="font-label-sm text-label-sm font-bold uppercase text-on-surface-variant tracking-wider">Request Parameters</span>
+<div class="flex flex-col gap-space-4">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-semibold font-mono">train_number</label>
+<span class="font-label-sm text-label-sm text-secondary font-bold">REQUIRED</span>
+</div>
+<input class="w-full bg-surface-container-low text-on-surface px-space-12 py-space-8 font-mono text-body-md rounded-DEFAULT focus:outline-none focus:bg-surface" id="param-train-no" placeholder="e.g. 12002, 22436" type="text" value="22436"/>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Vande Bharat Express (NDLS to BSB)</span>
+</div>
+<div class="flex flex-col gap-space-4">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-semibold font-mono">current_division</label>
+<span class="font-label-sm text-label-sm text-outline">OPTIONAL</span>
+</div>
+<select class="w-full bg-surface-container-low text-on-surface px-space-12 py-space-8 font-mono text-body-md rounded-DEFAULT focus:outline-none focus:bg-surface" id="param-division">
+<option selected="" value="NR">NR — Northern Railway (Delhi)</option>
+<option value="NCR">NCR — North Central (Prayagraj)</option>
+<option value="WR">WR — Western Railway (Mumbai)</option>
+<option value="ER">ER — Eastern Railway (Kolkata)</option>
+<option value="SCR">SCR — South Central (Secunderabad)</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-space-12">
+<div class="flex flex-col gap-space-4">
+<label class="font-label-md text-label-md text-on-surface font-semibold font-mono">response_mode</label>
+<select class="w-full bg-surface-container-low text-on-surface px-space-12 py-space-8 font-mono text-label-md rounded-DEFAULT focus:outline-none" id="param-mode">
+<option selected="" value="full_telemetry">full_telemetry</option>
+<option value="compact_eta">compact_eta</option>
+<option value="block_section_only">block_section</option>
+</select>
+</div>
+<div class="flex flex-col gap-space-4">
+<label class="font-label-md text-label-md text-on-surface font-semibold font-mono">include_gnss</label>
+<select class="w-full bg-surface-container-low text-on-surface px-space-12 py-space-8 font-mono text-label-md rounded-DEFAULT focus:outline-none" id="param-gnss">
+<option selected="" value="true">true (NavIC Locked)</option>
+<option value="false">false</option>
+</select>
+</div>
+</div>
+<!-- Action Execute Button -->
+<div class="pt-space-8 flex items-center gap-space-12">
+<button class="flex-1 bg-secondary hover:bg-on-secondary-fixed text-white font-headline-sm text-headline-sm font-semibold py-space-12 px-space-16 rounded-DEFAULT shadow-md flex items-center justify-center gap-space-8 transition-colors" id="send-request-btn">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+<span>Execute Telemetry Query</span>
+</button>
+<button class="bg-surface-container text-on-surface hover:bg-surface-container-high px-space-12 py-space-12 rounded-DEFAULT transition-colors" id="reset-params-btn" title="Reset Default Params">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Other Catalog Endpoints List -->
+<div class="bg-surface-container-lowest p-space-16 rounded-DEFAULT shadow-sm flex flex-col gap-space-12">
+<span class="font-label-sm text-label-sm font-bold uppercase text-on-surface-variant tracking-wider">Mission-Critical Catalog</span>
+<div class="flex flex-col gap-space-8">
+<!-- Route 1 -->
+<div class="endpoint-card active bg-surface-container-low hover:bg-surface-container p-space-12 rounded-DEFAULT cursor-pointer flex flex-col gap-space-4 transition-colors" data-route="position">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-8">
+<span class="bg-emerald-700 text-white font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">GET</span>
+<span class="font-code-block text-code-block text-primary font-bold">/eta/live-train-position</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">sensors</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time RTIS GNSS coordinate tracking, line speed &amp; section interlocking.</p>
+</div>
+<!-- Route 2 -->
+<div class="endpoint-card bg-surface-container-lowest hover:bg-surface-container-low p-space-12 rounded-DEFAULT cursor-pointer flex flex-col gap-space-4 transition-colors" data-route="occupancy">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-8">
+<span class="bg-primary text-white font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">POST</span>
+<span class="font-code-block text-code-block text-primary font-semibold">/control-room/section-occupancy</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline">traffic</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Block section telemetry, headway safety calculations, and signal aspects.</p>
+</div>
+<!-- Route 3 -->
+<div class="endpoint-card bg-surface-container-lowest hover:bg-surface-container-low p-space-12 rounded-DEFAULT cursor-pointer flex flex-col gap-space-4 transition-colors" data-route="pids">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-8">
+<span class="bg-emerald-700 text-white font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">GET</span>
+<span class="font-code-block text-code-block text-primary font-semibold">/station/pids-feed</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline">tv</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Passenger Information Display System platform assign &amp; audio synch.</p>
+</div>
+<!-- Route 4 -->
+<div class="endpoint-card bg-surface-container-lowest hover:bg-surface-container-low p-space-12 rounded-DEFAULT cursor-pointer flex flex-col gap-space-4 transition-colors" data-route="webhook">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-8">
+<span class="bg-primary text-white font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">POST</span>
+<span class="font-code-block text-code-block text-primary font-semibold">/b2b/webhook/delay-broadcaster</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline">webhook</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Automated bulk push webhooks for delay exceeding +15min thresholds.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Live Payload Viewer & Inspection Terminal (7 cols) -->
+<div class="lg:col-span-7 flex flex-col gap-space-16">
+<div class="bg-surface-container-lowest rounded-DEFAULT shadow-sm flex flex-col overflow-hidden">
+<!-- Header bar -->
+<div class="bg-primary px-space-16 py-space-12 flex flex-wrap items-center justify-between gap-space-12 text-white">
+<div class="flex items-center gap-space-12">
+<div class="flex items-center gap-space-6 bg-emerald-950 px-space-8 py-space-4 rounded-DEFAULT">
+<span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+<span class="font-label-sm text-label-sm font-bold font-mono text-emerald-300" id="response-status-badge">HTTP 200 OK</span>
+</div>
+<span class="text-outline-variant">|</span>
+<span class="font-label-sm text-label-sm font-mono text-primary-fixed" id="response-time-badge">Response: 14ms</span>
+<span class="hidden sm:inline-block font-label-sm text-label-sm font-mono text-primary-fixed-dim">JSON-UTF8</span>
+</div>
+<div class="flex items-center gap-space-8">
+<button class="bg-primary-container text-white px-space-12 py-space-4 font-label-sm text-label-sm rounded-DEFAULT hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-space-4" id="copy-json-btn">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span id="copy-btn-text">Copy JSON</span>
+</button>
+<button class="bg-primary-container text-white px-space-12 py-space-4 font-label-sm text-label-sm rounded-DEFAULT hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-space-4" id="download-schema-btn">
+<span class="material-symbols-outlined text-[14px]">file_download</span>
+<span>Schema (.d.ts)</span>
+</button>
+</div>
+</div>
+<!-- Telemetry Sub-ribbon with Live Coordinate Details -->
+<div class="bg-surface-container-low px-space-16 py-space-8 flex flex-wrap items-center justify-between gap-space-8 text-on-surface font-mono text-label-sm">
+<div class="flex items-center gap-space-12">
+<span class="text-on-surface-variant">CURRENT LOCO: <strong class="text-primary">WAP-7 #30498</strong></span>
+<span>COORD: <strong class="text-primary font-bold">28.5831° N, 77.2345° E</strong></span>
+</div>
+<div class="flex items-center gap-space-8">
+<span class="bg-surface px-space-8 py-space-2 rounded-DEFAULT text-emerald-800 font-bold">SPEED: 128.4 KM/H</span>
+<span class="bg-surface px-space-8 py-space-2 rounded-DEFAULT text-secondary font-bold">DELAY: +02 MIN</span>
+</div>
+</div>
+<!-- Terminal Code Window -->
+<div class="bg-inverse-surface p-space-16 overflow-x-auto min-h-[420px] max-h-[580px]">
+<pre class="font-code-block text-code-block text-inverse-on-surface leading-relaxed whitespace-pre font-mono" id="json-code-container"><span class="text-outline-variant">{</span>
+  <span class="text-secondary-fixed">"system"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"RAILWAY_RES_CRIS_ENGINE_V2.4"</span><span class="text-outline-variant">,</span>
+  <span class="text-secondary-fixed">"status"</span><span class="text-outline-variant">:</span> <span class="text-emerald-400">"SUCCESS"</span><span class="text-outline-variant">,</span>
+  <span class="text-secondary-fixed">"train_info"</span><span class="text-outline-variant">:</span> <span class="text-outline-variant">{</span>
+    <span class="text-secondary-fixed">"train_number"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"22436"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"train_name"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"VANDE BHARAT EXPRESS"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"origin"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"NDLS (New Delhi)"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"destination"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"BSB (Varanasi Junction)"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"service_type"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"PREMIUM_SUPERFAST_EMU"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"rake_composition"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"16_COACH_CHAIR_CAR"</span>
+  <span class="text-outline-variant">}</span><span class="text-outline-variant">,</span>
+  <span class="text-secondary-fixed">"real_time_telemetry"</span><span class="text-outline-variant">:</span> <span class="text-outline-variant">{</span>
+    <span class="text-secondary-fixed">"rtis_gnss_status"</span><span class="text-outline-variant">:</span> <span class="text-emerald-400">"LOCKED_NAV_IC"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"current_coordinates"</span><span class="text-outline-variant">:</span> <span class="text-outline-variant">{</span><span class="text-secondary-fixed">"latitude"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">28.5831</span><span class="text-outline-variant">,</span> <span class="text-secondary-fixed">"longitude"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">77.2345</span><span class="text-outline-variant">}</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"current_speed_kmph"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">128.4</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"max_sanctioned_speed"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">130.0</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"current_block_section"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"TKJ-NZM UP FAST LINE"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"signal_aspect"</span><span class="text-outline-variant">:</span> <span class="text-amber-300">"DOUBLE_YELLOW_CAUTION_45KMPH"</span>
+  <span class="text-outline-variant">}</span><span class="text-outline-variant">,</span>
+  <span class="text-secondary-fixed">"live_eta_schedule"</span><span class="text-outline-variant">:</span> <span class="text-outline-variant">[</span>
+    <span class="text-outline-variant">{</span>
+      <span class="text-secondary-fixed">"station_code"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"CNB"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"station_name"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"Kanpur Central"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"scheduled_arrival"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"14:00"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"predicted_eta"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"14:02"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"delay_minutes"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">2</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"platform_assigned"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"Platform 01 (Confirmed)"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"confidence_score"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">0.984</span>
+    <span class="text-outline-variant">}</span><span class="text-outline-variant">,</span>
+    <span class="text-outline-variant">{</span>
+      <span class="text-secondary-fixed">"station_code"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"PRYJ"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"station_name"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"Prayagraj Junction"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"scheduled_arrival"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"16:08"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"predicted_eta"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"16:09"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"delay_minutes"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">1</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"platform_assigned"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"Platform 06 (Estimated)"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"confidence_score"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">0.962</span>
+    <span class="text-outline-variant">}</span><span class="text-outline-variant">,</span>
+    <span class="text-outline-variant">{</span>
+      <span class="text-secondary-fixed">"station_code"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"BSB"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"station_name"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"Varanasi Junction"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"scheduled_arrival"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"18:30"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"predicted_eta"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"18:30"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"delay_minutes"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">0</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"status"</span><span class="text-outline-variant">:</span> <span class="text-emerald-400">"ON_TIME"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"platform_assigned"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"Platform 01"</span><span class="text-outline-variant">,</span>
+      <span class="text-secondary-fixed">"confidence_score"</span><span class="text-outline-variant">:</span> <span class="text-primary-fixed-dim">0.991</span>
+    <span class="text-outline-variant">}</span>
+  <span class="text-outline-variant">]</span><span class="text-outline-variant">,</span>
+  <span class="text-secondary-fixed">"control_room_flags"</span><span class="text-outline-variant">:</span> <span class="text-outline-variant">{</span>
+    <span class="text-secondary-fixed">"interlocking_clearance"</span><span class="text-outline-variant">:</span> <span class="text-emerald-400">true</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"weather_condition"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"CLEAR"</span><span class="text-outline-variant">,</span>
+    <span class="text-secondary-fixed">"priority_level"</span><span class="text-outline-variant">:</span> <span class="text-tertiary-fixed">"LEVEL_1_HIGHEST"</span>
+  <span class="text-outline-variant">}</span>
+<span class="text-outline-variant">}</span></pre>
+</div>
+<!-- Footer Stats in Terminal -->
+<div class="bg-surface-container-high px-space-16 py-space-8 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-space-12">
+<span class="flex items-center gap-space-4">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">lock</span>
+<span>TLS 1.3 End-to-End Cryptography</span>
+</span>
+<span class="hidden sm:inline-block">•</span>
+<span class="hidden sm:inline-block">Payload Size: 1.84 KB</span>
+</div>
+<span class="font-mono text-primary font-bold">RATE LIMIT: 100,000 / HR</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Station ETA Visual Timetable Table (Mission Control Density) -->
+<section class="w-full bg-surface-container-lowest rounded-DEFAULT shadow-sm overflow-hidden">
+<div class="p-space-16 bg-surface-container-low flex flex-wrap items-center justify-between gap-space-12">
+<div class="flex items-center gap-space-8">
+<span class="material-symbols-outlined text-primary text-[22px]">departure_board</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary">Live Predictive Route ETA Matrix — Train #22436</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time sectional timetable comparing scheduled departure against dynamic machine-learning projections</p>
+</div>
+</div>
+<div class="flex items-center gap-space-8">
+<span class="bg-surface text-primary px-space-12 py-space-4 rounded-DEFAULT font-label-sm text-label-sm font-mono font-bold">ROUTE: NDLS → BSB (759 KM)</span>
+<button class="bg-surface text-secondary hover:bg-surface-container px-space-12 py-space-4 rounded-DEFAULT font-label-sm text-label-sm font-semibold flex items-center gap-space-4">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+<span>Re-sync RTIS</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-primary text-white font-label-sm text-label-sm font-mono uppercase tracking-wider">
+<tr>
+<th class="px-space-16 py-space-12">Station Node</th>
+<th class="px-space-16 py-space-12">Station Name</th>
+<th class="px-space-16 py-space-12 text-center">Sched. Arrival</th>
+<th class="px-space-16 py-space-12 text-center">Predicted RES ETA</th>
+<th class="px-space-16 py-space-12 text-center">Delay Status</th>
+<th class="px-space-16 py-space-12 text-center">Platform Allocation</th>
+<th class="px-space-16 py-space-12 text-center">ML Confidence</th>
+</tr>
+</thead>
+<tbody class="divide-y-0">
+<tr class="bg-surface hover:bg-surface-container transition-colors">
+<td class="px-space-16 py-space-12 font-mono font-bold text-primary">NDLS</td>
+<td class="px-space-16 py-space-12 font-medium">New Delhi (Origin)</td>
+<td class="px-space-16 py-space-12 text-center font-mono">06:00 (Dep)</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold text-emerald-800">06:00 (Actual)</td>
+<td class="px-space-16 py-space-12 text-center">
+<span class="bg-emerald-100 text-emerald-800 font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">DEPARTED ON TIME</span>
+</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold">PF #16</td>
+<td class="px-space-16 py-space-12 text-center font-mono text-tertiary-container font-bold">100.0%</td>
+</tr>
+<tr class="bg-surface-container-lowest hover:bg-surface-container transition-colors">
+<td class="px-space-16 py-space-12 font-mono font-bold text-primary">CNB</td>
+<td class="px-space-16 py-space-12 font-medium">Kanpur Central</td>
+<td class="px-space-16 py-space-12 text-center font-mono">10:08</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold text-amber-800">10:10</td>
+<td class="px-space-16 py-space-12 text-center">
+<span class="bg-amber-100 text-amber-900 font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">DELAY +02 MIN</span>
+</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold text-primary">PF #01 (Confirmed)</td>
+<td class="px-space-16 py-space-12 text-center font-mono text-emerald-800 font-bold">98.4%</td>
+</tr>
+<tr class="bg-surface hover:bg-surface-container transition-colors">
+<td class="px-space-16 py-space-12 font-mono font-bold text-primary">PRYJ</td>
+<td class="px-space-16 py-space-12 font-medium">Prayagraj Junction</td>
+<td class="px-space-16 py-space-12 text-center font-mono">12:08</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold text-amber-800">12:09</td>
+<td class="px-space-16 py-space-12 text-center">
+<span class="bg-amber-100 text-amber-900 font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">DELAY +01 MIN</span>
+</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold text-on-surface-variant">PF #06 (Estimated)</td>
+<td class="px-space-16 py-space-12 text-center font-mono text-emerald-800 font-bold">96.2%</td>
+</tr>
+<tr class="bg-surface-container-lowest hover:bg-surface-container transition-colors">
+<td class="px-space-16 py-space-12 font-mono font-bold text-primary">BSB</td>
+<td class="px-space-16 py-space-12 font-medium">Varanasi Junction (Terminus)</td>
+<td class="px-space-16 py-space-12 text-center font-mono">14:00</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold text-emerald-800">14:00</td>
+<td class="px-space-16 py-space-12 text-center">
+<span class="bg-emerald-100 text-emerald-800 font-label-sm text-label-sm font-bold px-space-8 py-space-2 rounded-DEFAULT">PROJECTED ON TIME</span>
+</td>
+<td class="px-space-16 py-space-12 text-center font-mono font-bold text-primary">PF #01 (Reserved)</td>
+<td class="px-space-16 py-space-12 text-center font-mono text-emerald-800 font-bold">99.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Architecture Showcase: 3 Stakeholder Consumption Pillars -->
+<section class="flex flex-col gap-space-16 pt-space-8">
+<div class="flex flex-col gap-space-4">
+<span class="font-label-sm text-label-sm uppercase font-bold text-secondary tracking-wider">Enterprise Distribution Engine</span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary">How Indian Railways Disseminates Real-Time RES Feeds</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">Sub-second event ingestion directly from NavIC GPS locos through CRIS high-speed Kafka clusters to dispatch centers, physical stations, and million-user passenger endpoints.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-24 pt-space-12">
+<!-- Column 1: Control Room -->
+<div class="bg-surface-container-lowest p-space-24 rounded-DEFAULT shadow-sm flex flex-col justify-between gap-space-16 hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-12">
+<div class="w-12 h-12 rounded-DEFAULT bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">speed</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary">Control Room &amp; Divisional Dispatchers</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Seamless real-time signal aspect telemetry, electronic interlocking clearance, headway minimization, and proactive detection of Permanent Speed Restrictions (PSR) across 68 divisions.
+              </p>
+</div>
+<div class="flex flex-col gap-space-8 pt-space-12">
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Section Controller Headway Radar</span>
+</div>
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Automated Conflict Alerts</span>
+</div>
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Loco Pilot Speed Verification</span>
+</div>
+</div>
+</div>
+<!-- Column 2: Station Displays (NTES & PIDS) -->
+<div class="bg-surface-container-lowest p-space-24 rounded-DEFAULT shadow-sm flex flex-col justify-between gap-space-16 hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-12">
+<div class="w-12 h-12 rounded-DEFAULT bg-secondary-container text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">display_settings</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary">Station NTES &amp; Platform Displays</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Direct low-latency push protocol to 8,000+ railway stations powering multi-lingual RGB LED platform boards, coach guidance indicators (CGDB), and synthesized automated PA audio broadcast systems.
+              </p>
+</div>
+<div class="flex flex-col gap-space-8 pt-space-12">
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Sub-50ms Synchronous LED Updates</span>
+</div>
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Automated Hindi &amp; English Audio Engine</span>
+</div>
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Platform Re-allocation Dynamic Rerouting</span>
+</div>
+</div>
+</div>
+<!-- Column 3: Passenger Apps & B2B -->
+<div class="bg-surface-container-lowest p-space-24 rounded-DEFAULT shadow-sm flex flex-col justify-between gap-space-16 hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-12">
+<div class="w-12 h-12 rounded-DEFAULT bg-tertiary-container text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">devices</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-primary">Passenger Apps &amp; B2B Aggregators</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Powers over 80 million daily active mobile sessions across IRCTC Rail Connect, Google Maps Transit, MakeMyTrip, Ixigo, and critical industrial supply chain coal/container tracking systems.
+              </p>
+</div>
+<div class="flex flex-col gap-space-8 pt-space-12">
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>PNR-specific Live Boarding Countdowns</span>
+</div>
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Instant Delay Push Webhooks (Kafka)</span>
+</div>
+<div class="flex items-center gap-space-8 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+<span>Strict 99.98% Service Level Uptime</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Institutional Security Notice & Sandbox Access Box -->
+<section class="w-full bg-surface-container-low p-space-24 rounded-DEFAULT shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-24">
+<div class="flex items-start gap-space-16 max-w-3xl">
+<div class="p-space-8 bg-surface-container-highest rounded-DEFAULT text-primary shrink-0">
+<span class="material-symbols-outlined text-[28px]">security</span>
+</div>
+<div class="flex flex-col gap-space-4">
+<div class="flex items-center gap-space-8">
+<h4 class="font-headline-sm text-headline-sm font-bold text-primary">Institutional Access &amp; Compliance Standards</h4>
+<span class="bg-primary-container text-white font-label-sm text-label-sm font-mono px-space-8 py-space-2 rounded-DEFAULT">GIGW 3.0 Compliant</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              RES telemetry APIs require Mutual TLS (mTLS) with CRIS Root CA certificates. Commercial aggregators and B2B developers must hold an authorized IRCTC Content Dissemination Agreement. Sandboxed mock feeds with synthetic GPS replay are unrestricted.
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-space-12 shrink-0">
+<button class="bg-primary hover:bg-primary-container text-white font-headline-sm text-headline-sm font-semibold px-space-20 py-space-12 rounded-DEFAULT shadow-sm transition-all flex items-center gap-space-8" id="gen-sandbox-key-btn">
+<span class="material-symbols-outlined text-[18px]">key</span>
+<span>Generate Sandbox Key</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Interactive Client-side Scripting -->
+<script>
+    (function() {
+      // API Endpoints Definition Catalog
+      var ENDPOINTS = {
+        position: {
+          method: 'GET',
+          path: '/api/v2.4/eta/live-train-position',
+          status: 'HTTP 200 OK',
+          time: '14ms',
+          payload: {
+            "system": "RAILWAY_RES_CRIS_ENGINE_V2.4",
+            "status": "SUCCESS",
+            "train_info": {
+              "train_number": "22436",
+              "train_name": "VANDE BHARAT EXPRESS",
+              "origin": "NDLS (New Delhi)",
+              "destination": "BSB (Varanasi Junction)",
+              "service_type": "PREMIUM_SUPERFAST_EMU",
+              "rake_composition": "16_COACH_CHAIR_CAR"
+            },
+            "real_time_telemetry": {
+              "rtis_gnss_status": "LOCKED_NAV_IC",
+              "current_coordinates": { "latitude": 28.5831, "longitude": 77.2345 },
+              "current_speed_kmph": 128.4,
+              "max_sanctioned_speed": 130.0,
+              "current_block_section": "TKJ-NZM UP FAST LINE",
+              "signal_aspect": "DOUBLE_YELLOW_CAUTION_45KMPH"
+            },
+            "live_eta_schedule": [
+              {
+                "station_code": "CNB",
+                "station_name": "Kanpur Central",
+                "scheduled_arrival": "14:00",
+                "predicted_eta": "14:02",
+                "delay_minutes": 2,
+                "platform_assigned": "Platform 01 (Confirmed)",
+                "confidence_score": 0.984
+              },
+              {
+                "station_code": "PRYJ",
+                "station_name": "Prayagraj Junction",
+                "scheduled_arrival": "16:08",
+                "predicted_eta": "16:09",
+                "delay_minutes": 1,
+                "platform_assigned": "Platform 06 (Estimated)",
+                "confidence_score": 0.962
+              },
+              {
+                "station_code": "BSB",
+                "station_name": "Varanasi Junction",
+                "scheduled_arrival": "18:30",
+                "predicted_eta": "18:30",
+                "delay_minutes": 0,
+                "status": "ON_TIME",
+                "platform_assigned": "Platform 01",
+                "confidence_score": 0.991
+              }
+            ],
+            "control_room_flags": {
+              "interlocking_clearance": true,
+              "weather_condition": "CLEAR",
+              "priority_level": "LEVEL_1_HIGHEST"
+            }
+          }
+        },
+        occupancy: {
+          method: 'POST',
+          path: '/api/v2.4/control-room/section-occupancy',
+          status: 'HTTP 201 CREATED',
+          time: '28ms',
+          payload: {
+            "system": "CRIS_SECTION_CONTROL_RADAR",
+            "division": "NR_DELHI",
+            "section_id": "NDLS-GZB-3A",
+            "block_track_status": "OCCUPIED",
+            "active_occupant": {
+              "train_number": "12002",
+              "loco_id": "WAP7_30221",
+              "entry_timestamp": "2026-09-05T21:24:10+05:30",
+              "clearing_eta": "2026-09-05T21:28:45+05:30"
+            },
+            "headway_safe_margin_seconds": 240,
+            "next_signal_aspect": "GREEN_CLEAR_MAX_SANCTIONED",
+            "automatic_block_signaling": "ENABLED"
+          }
+        },
+        pids: {
+          method: 'GET',
+          path: '/api/v2.4/station/pids-feed',
+          status: 'HTTP 200 OK',
+          time: '9ms',
+          payload: {
+            "station_code": "NDLS",
+            "pids_display_node": "PF_16_CONCOURSE_LED",
+            "active_announcements": [
+              {
+                "train_number": "22436",
+                "train_name_hi": "नई दिल्ली - वाराणसी वंदे भारत एक्सप्रेस",
+                "train_name_en": "Vande Bharat Express",
+                "platform": "16",
+                "eta": "06:00",
+                "status_text": "ON TIME / समय पर",
+                "coach_formation": ["E1", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "E2"]
+              }
+            ],
+            "refresh_interval_seconds": 15
+          }
+        },
+        webhook: {
+          method: 'POST',
+          path: '/api/v2.4/b2b/webhook/delay-broadcaster',
+          status: 'HTTP 202 ACCEPTED',
+          time: '42ms',
+          payload: {
+            "event_type": "TRAIN_DELAY_THRESHOLD_EXCEEDED",
+            "event_id": "EVT_7721094_DEL",
+            "timestamp": "2026-09-05T21:26:28+05:30",
+            "impacted_train": "12301",
+            "train_name": "HOWRAH RAJDHANI EXPRESS",
+            "current_delay_minutes": 28,
+            "cause_code": "CAUTION_ORDER_CONSTRUCTION_ASR",
+            "subscribers_notified": 184200,
+            "target_aggregators": ["IRCTC_APP", "GOOG_TRANSIT_FEED", "MMT_CORE", "IXIGO_GATEWAY"]
+          }
+        }
+      };
+
+      function formatSyntaxHighlighted(obj) {
+        var str = JSON.stringify(obj, null, 2);
+        return str.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+          var cls = 'text-primary-fixed-dim'; // number
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+              cls = 'text-secondary-fixed'; // key
+            } else {
+              cls = 'text-tertiary-fixed'; // string
+            }
+          } else if (/true|false/.test(match)) {
+            cls = 'text-emerald-400'; // boolean
+          }
+          return '<span class="' + cls + '">' + match + '</span>';
+        });
+      }
+
+      var activeRoute = 'position';
+      var pathLabel = document.getElementById('active-endpoint-path');
+      var codeContainer = document.getElementById('json-code-container');
+      var statusBadge = document.getElementById('response-status-badge');
+      var timeBadge = document.getElementById('response-time-badge');
+      var sendBtn = document.getElementById('send-request-btn');
+      var copyBtn = document.getElementById('copy-json-btn');
+      var copyBtnText = document.getElementById('copy-btn-text');
+
+      function updateConsole(routeKey) {
+        activeRoute = routeKey;
+        var data = ENDPOINTS[routeKey];
+        if (!data) return;
+
+        pathLabel.textContent = data.path;
+        statusBadge.textContent = data.status;
+        timeBadge.textContent = 'Response: ' + data.time;
+        codeContainer.innerHTML = formatSyntaxHighlighted(data.payload);
+
+        // Highlight selected card
+        document.querySelectorAll('.endpoint-card').forEach(function(card) {
+          if (card.getAttribute('data-route') === routeKey) {
+            card.classList.add('bg-surface-container-low');
+            card.classList.remove('bg-surface-container-lowest');
+          } else {
+            card.classList.remove('bg-surface-container-low');
+            card.classList.add('bg-surface-container-lowest');
+          }
+        });
+      }
+
+      // Endpoint selection clicking
+      document.querySelectorAll('.endpoint-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          var route = this.getAttribute('data-route');
+          updateConsole(route);
+        });
+      });
+
+      // Execute button trigger with simulated ping
+      if (sendBtn) {
+        sendBtn.addEventListener('click', function() {
+          var originalContent = sendBtn.innerHTML;
+          sendBtn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">sync</span><span>Querying CRIS Radar...</span>';
+          
+          setTimeout(function() {
+            var inputTrain = document.getElementById('param-train-no').value || '22436';
+            var currentData = JSON.parse(JSON.stringify(ENDPOINTS[activeRoute]));
+            
+            if (currentData.payload.train_info) {
+              currentData.payload.train_info.train_number = inputTrain;
+            }
+            
+            // Randomize speed slightly to show live simulation
+            if (currentData.payload.real_time_telemetry) {
+              currentData.payload.real_time_telemetry.current_speed_kmph = +(120 + Math.random() * 9).toFixed(1);
+            }
+
+            var randMs = Math.floor(10 + Math.random() * 15);
+            timeBadge.textContent = 'Response: ' + randMs + 'ms';
+            codeContainer.innerHTML = formatSyntaxHighlighted(currentData.payload);
+            sendBtn.innerHTML = originalContent;
+          }, 320);
+        });
+      }
+
+      // Copy payload logic
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+          var textToCopy = JSON.stringify(ENDPOINTS[activeRoute].payload, null, 2);
+          navigator.clipboard.writeText(textToCopy).then(function() {
+            copyBtnText.textContent = 'Copied!';
+            setTimeout(function() {
+              copyBtnText.textContent = 'Copy JSON';
+            }, 1800);
+          });
+        });
+      }
+
+      // Category tab filtering visual change
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.tab-btn').forEach(function(b) {
+            b.classList.remove('bg-primary', 'text-on-primary', 'font-bold');
+            b.classList.add('bg-surface-container-lowest', 'text-on-surface', 'font-medium');
+          });
+          this.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'font-medium');
+          this.classList.add('bg-primary', 'text-on-primary', 'font-bold');
+        });
+      });
+
+      // Real-time micro live tick for Active Locos counter
+      var counter = document.getElementById('tracked-counter');
+      if (counter) {
+        setInterval(function() {
+          var delta = Math.floor(Math.random() * 3) - 1;
+          var curr = parseInt(counter.textContent.replace(',', ''), 10);
+          counter.textContent = (curr + delta).toLocaleString();
+        }, 3000);
+      }
+
+      // Sandbox key notification toast
+      var sandboxBtn = document.getElementById('gen-sandbox-key-btn');
+      if (sandboxBtn) {
+        sandboxBtn.addEventListener('click', function() {
+          alert('Indian Railways CRIS Sandbox Key generated:\n\nKey: iris_sandbox_live_8849b29e_cr24\nQuota: 10,000 req/day\nmTLS Endpoint: https://sandbox-telemetry.cris.org.in/v2.4');
+        });
+      }
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low mt-space-48"><div class="w-full px-margin-edge py-space-32 flex flex-col md:flex-row items-start md:items-center justify-between gap-space-24"><div class="flex flex-col gap-space-8 max-w-2xl"><div class="flex items-center gap-space-12"><span class="font-headline-sm text-headline-sm font-bold text-primary">Indian Railways RES Portal</span><span class="font-label-sm text-label-sm bg-surface-container-highest text-on-surface px-space-8 py-space-2 rounded-DEFAULT">CRIS-IRCTC Network</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">© 2024 Centre for Railway Information Systems (CRIS), Ministry of Railways &amp; Indian Railway Catering and Tourism Corporation (IRCTC). All Rights Reserved. Restricted to authorized railway operations personnel and registered enterprise API developers.</p><div class="flex flex-wrap items-center gap-space-16 text-on-surface-variant font-label-sm text-label-sm mt-space-4"><a class="hover:text-primary transition-colors" href="#">Security &amp; Encryption Standards</a><span>•</span><a class="hover:text-primary transition-colors" href="#">GIGW Accessibility Compliance</a><span>•</span><a class="hover:text-primary transition-colors" href="#">Developer Terms of Service</a></div></div><div class="flex flex-col sm:flex-row items-start sm:items-center gap-space-24 bg-surface-container p-space-16 rounded-xl"><div class="flex flex-col"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-medium">Production API Uptime</span><div class="flex items-center gap-space-4"><span class="font-headline-md text-headline-md font-bold text-primary font-mono">99.98%</span><span class="material-symbols-outlined text-[18px] text-tertiary-container">verified</span></div><span class="font-label-sm text-label-sm text-outline">Last 90 days rolling average</span></div><div class="h-10 w-px bg-outline-variant/50 hidden sm:block"></div><div class="flex flex-col"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-medium">Emergency NOC Hotline</span><span class="font-label-lg text-label-lg font-mono font-bold text-secondary">1800-111-CRIS (2747)</span><span class="font-label-sm text-label-sm text-outline">Station Dispatch &amp; Telecom Desk</span></div></div></div></footer></body></html>
