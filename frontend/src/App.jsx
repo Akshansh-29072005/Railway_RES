@@ -6,6 +6,7 @@ import ApiExplorer from './components/ApiExplorer';
 import RouteMatrix from './components/RouteMatrix';
 import ArchitectureShowcase from './components/ArchitectureShowcase';
 import SecurityNotice from './components/SecurityNotice';
+import VisualizeMap from './components/VisualizeMap';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -40,21 +41,25 @@ export default function App() {
       <Header activeNav={activeNav} setActiveNav={setActiveNav} />
 
       <main className="w-full pt-[144px] bg-surface min-h-[calc(100vh-140px)] flex-1">
-        <div className="flex flex-col w-full">
-          <HeroBanner onOpenAuth={handleOpenAuth} onDownloadDocs={handleDownloadDocs} />
-          
-          <CategoryFilter activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
+        {activeNav === 'visualize' ? (
+          <VisualizeMap />
+        ) : (
+          <div className="flex flex-col w-full">
+            <HeroBanner onOpenAuth={handleOpenAuth} onDownloadDocs={handleDownloadDocs} />
+            
+            <CategoryFilter activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
 
-          <ApiExplorer trainNo={trainNo} setTrainNo={setTrainNo} />
+            <ApiExplorer trainNo={trainNo} setTrainNo={setTrainNo} />
 
-          <div className="w-full px-margin-edge">
-            <div className="max-w-7xl mx-auto flex flex-col">
-              <RouteMatrix trainNo={trainNo} />
-              <ArchitectureShowcase />
-              <SecurityNotice />
+            <div className="w-full px-margin-edge">
+              <div className="max-w-7xl mx-auto flex flex-col">
+                <RouteMatrix trainNo={trainNo} />
+                <ArchitectureShowcase />
+                <SecurityNotice />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </main>
 
       <Footer />

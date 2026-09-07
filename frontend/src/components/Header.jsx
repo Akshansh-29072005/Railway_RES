@@ -26,7 +26,8 @@ export default function Header({ activeNav, setActiveNav }) {
     { id: 'control-room', label: 'Control Room Real-Time Feeds' },
     { id: 'station-ntes', label: 'Station NTES Display Feeds' },
     { id: 'passenger-webhook', label: 'Passenger & B2B Webhook Gateway' },
-    { id: 'sla-latency', label: 'SLA & Latency Telemetry' }
+    { id: 'sla-latency', label: 'SLA & Latency Telemetry' },
+    { id: 'visualize', label: 'Visualize' }
   ];
 
   return (
