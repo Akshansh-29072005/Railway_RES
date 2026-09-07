@@ -70,37 +70,37 @@ const ControlRoomView = () => {
   const allSignals = Object.values(simState.signals || {});
 
   return (
-    <div style={{ backgroundColor: '#0f172a', color: '#f8fafc', minHeight: '100%', padding: '20px', fontFamily: 'sans-serif', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="bg-surface text-on-surface min-h-[calc(100vh-140px)] p-6 font-body-md flex flex-col gap-6">
       
       {/* TOP HEADER BAR */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1e293b', padding: '15px 20px', borderRadius: '8px', border: '1px solid #334155' }}>
-        <h1 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#e2e8f0', letterSpacing: '1px' }}>
+      <div className="flex justify-between items-center bg-surface-container px-6 py-4 rounded-xl border border-outline-variant/30 shadow-sm">
+        <h1 className="m-0 text-lg font-bold text-primary tracking-wide">
           SECR RAIPUR DIVISION — CONTROL ROOM OPERATIONS CONSOLE
         </h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#3b82f6', fontFamily: 'monospace' }}>
+        <div className="flex items-center gap-4">
+          <div className="text-lg font-bold text-secondary font-mono">
             {simState.simTimeStr}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: blink ? '#10b981' : '#047857', boxShadow: blink ? '0 0 8px #10b981' : 'none', transition: 'all 0.3s' }}></div>
-            <span style={{ fontSize: '14px', fontWeight: 'bold', color: blink ? '#10b981' : '#047857' }}>LIVE</span>
+          <div className="flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-full transition-all duration-300 ${blink ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-green-700'}`}></div>
+            <span className={`text-sm font-bold ${blink ? 'text-green-600' : 'text-green-800'}`}>LIVE</span>
           </div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '20px', flex: 1 }}>
+      <div className="flex flex-col lg:flex-row gap-6 flex-1">
         
         {/* LEFT PANEL — BLOCK SECTION OCCUPANCY MATRIX */}
-        <div style={{ flex: 1, backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#cbd5e1', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>BLOCK SECTION OCCUPANCY MATRIX</h2>
-          <div style={{ overflowY: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <div className="flex-1 bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-sm p-6 flex flex-col">
+          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-3">BLOCK SECTION OCCUPANCY MATRIX</h2>
+          <div className="overflow-y-auto">
+            <table className="w-full border-collapse text-left">
               <thead>
                 <tr>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #334155', color: '#94a3b8', fontSize: '13px' }}>Section</th>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #334155', color: '#94a3b8', fontSize: '13px' }}>Status</th>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #334155', color: '#94a3b8', fontSize: '13px' }}>Train</th>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #334155', color: '#94a3b8', fontSize: '13px' }}>Speed</th>
+                  <th className="p-3 border-b-2 border-outline-variant/30 text-on-surface-variant text-sm">Section</th>
+                  <th className="p-3 border-b-2 border-outline-variant/30 text-on-surface-variant text-sm">Status</th>
+                  <th className="p-3 border-b-2 border-outline-variant/30 text-on-surface-variant text-sm">Train</th>
+                  <th className="p-3 border-b-2 border-outline-variant/30 text-on-surface-variant text-sm">Speed</th>
                 </tr>
               </thead>
               <tbody>
@@ -108,17 +108,17 @@ const ControlRoomView = () => {
                   const occupyingTrains = simState.trains.filter(t => t.blockSection === sec.id);
                   const isOccupied = occupyingTrains.length > 0;
                   return (
-                    <tr key={sec.id} style={{ borderBottom: '1px solid #334155' }}>
-                      <td style={{ padding: '12px 10px', fontWeight: '500', fontSize: '14px' }}>{sec.label}</td>
-                      <td style={{ padding: '12px 10px' }}>
-                        <span style={{ backgroundColor: isOccupied ? '#ef4444' : '#10b981', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>
+                    <tr key={sec.id} className="border-b border-outline-variant/20">
+                      <td className="p-3 font-medium text-sm text-on-surface">{sec.label}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-1 rounded text-xs font-bold text-white ${isOccupied ? 'bg-red-500' : 'bg-green-500'}`}>
                           {isOccupied ? 'OCCUPIED' : 'CLEAR'}
                         </span>
                       </td>
-                      <td style={{ padding: '12px 10px', fontSize: '14px', fontFamily: 'monospace', color: isOccupied ? '#f8fafc' : '#64748b' }}>
+                      <td className={`p-3 text-sm font-mono ${isOccupied ? 'text-on-surface font-bold' : 'text-outline-variant'}`}>
                         {isOccupied ? occupyingTrains.map(t => t.trainNumber).join(', ') : '—'}
                       </td>
-                      <td style={{ padding: '12px 10px', fontSize: '14px', color: isOccupied ? '#f8fafc' : '#64748b' }}>
+                      <td className={`p-3 text-sm ${isOccupied ? 'text-on-surface font-bold' : 'text-outline-variant'}`}>
                         {isOccupied ? occupyingTrains.map(t => `${Math.round(t.currentSpeed)} km/h`).join(', ') : '—'}
                       </td>
                     </tr>
@@ -130,40 +130,40 @@ const ControlRoomView = () => {
         </div>
 
         {/* RIGHT PANEL — SIGNAL ASPECT PANEL */}
-        <div style={{ flex: 1, backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#cbd5e1', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>LIVE SIGNAL ASPECT PANEL (ABS)</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '15px', overflowY: 'auto', paddingRight: '5px' }}>
+        <div className="flex-1 bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-sm p-6 flex flex-col">
+          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-3">LIVE SIGNAL ASPECT PANEL (ABS)</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto pr-2">
             {allSignals.length > 0 ? (
               allSignals.map(sig => (
-                <div key={sig.id} style={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '6px', padding: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: getSignalColor(sig.aspect), boxShadow: `0 0 10px ${getSignalColor(sig.aspect)}` }}></div>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#e2e8f0' }}>{sig.id}</span>
-                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>{sig.section || `${sig.km} km`}</span>
+                <div key={sig.id} className="bg-surface border border-outline-variant/30 rounded-lg p-3 flex items-center gap-3">
+                  <div style={{ backgroundColor: getSignalColor(sig.aspect), boxShadow: `0 0 10px ${getSignalColor(sig.aspect)}` }} className="w-5 h-5 rounded-full"></div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-on-surface">{sig.id}</span>
+                    <span className="text-xs text-on-surface-variant">{sig.section || `${sig.km} km`}</span>
                   </div>
                 </div>
               ))
             ) : (
-              <div style={{ color: '#64748b', fontSize: '14px', padding: '10px 0' }}>No signals data available</div>
+              <div className="text-on-surface-variant text-sm py-2">No signals data available</div>
             )}
           </div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '20px' }}>
+      <div className="flex flex-col lg:flex-row gap-6">
         
         {/* BOTTOM LEFT — AVAILABLE API ENDPOINTS */}
-        <div style={{ flex: 1, backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', padding: '20px' }}>
-          <h2 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#cbd5e1', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>CONTROL ROOM API ENDPOINTS</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="flex-1 bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-sm p-6">
+          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-3">CONTROL ROOM API ENDPOINTS</h2>
+          <div className="flex flex-col gap-3">
             {endpoints.map((ep, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#0f172a', padding: '12px', borderRadius: '6px', border: '1px solid #334155' }}>
-                <div style={{ backgroundColor: ep.color, color: '#fff', fontSize: '12px', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', width: '45px', textAlign: 'center' }}>
+              <div key={idx} className="flex items-center gap-4 bg-surface p-3 rounded-lg border border-outline-variant/30">
+                <div style={{ backgroundColor: ep.color }} className="text-white text-xs font-bold px-2 py-1 rounded w-12 text-center">
                   {ep.method}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <span style={{ fontFamily: 'monospace', fontSize: '14px', color: '#e2e8f0' }}>{ep.path}</span>
-                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>{ep.desc}</span>
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-sm text-on-surface font-semibold">{ep.path}</span>
+                  <span className="text-xs text-on-surface-variant">{ep.desc}</span>
                 </div>
               </div>
             ))}
@@ -171,26 +171,28 @@ const ControlRoomView = () => {
         </div>
 
         {/* BOTTOM RIGHT — ACTIVE SPEED RESTRICTIONS */}
-        <div style={{ flex: 1, backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', padding: '20px' }}>
-          <h2 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#cbd5e1', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>ACTIVE SPEED RESTRICTIONS (TSR/PSR)</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', overflowY: 'auto', maxHeight: '300px', paddingRight: '5px' }}>
+        <div className="flex-1 bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-sm p-6">
+          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-3">ACTIVE SPEED RESTRICTIONS (TSR/PSR)</h2>
+          <div className="flex flex-col gap-3 overflow-y-auto max-h-[300px] pr-2">
             {simState.restrictions && simState.restrictions.length > 0 ? (
               simState.restrictions.map(r => (
-                <div key={r.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', backgroundColor: '#0f172a', padding: '12px', borderRadius: '6px', border: '1px solid #334155', borderLeft: `4px solid ${r.type === 'TSR' ? '#f59e0b' : '#3b82f6'}` }}>
-                  <span style={{ fontSize: '18px' }}>⚠️</span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#e2e8f0' }}>{r.id} <span style={{ fontSize: '11px', backgroundColor: '#334155', padding: '2px 6px', borderRadius: '4px', marginLeft: '6px', fontWeight: 'normal' }}>{r.type}</span></span>
-                      <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#ef4444' }}>{r.speedLimit} km/h</span>
+                <div key={r.id} className={`flex items-start gap-3 bg-surface p-3 rounded-lg border border-outline-variant/30 border-l-4 ${r.type === 'TSR' ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
+                  <span className="text-lg">⚠️</span>
+                  <div className="flex flex-col gap-1 flex-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-on-surface">
+                        {r.id} <span className="text-xs bg-surface-container px-2 py-0.5 rounded ml-2 font-normal text-on-surface-variant">{r.type}</span>
+                      </span>
+                      <span className="text-sm font-bold text-red-600">{r.speedLimit} km/h</span>
                     </div>
-                    <span style={{ fontSize: '13px', color: '#94a3b8' }}>{r.fromStation} – {r.toStation} ({r.startKm} to {r.endKm} km)</span>
-                    <span style={{ fontSize: '12px', color: '#64748b', fontStyle: 'italic' }}>Reason: {r.reason}</span>
+                    <span className="text-xs text-on-surface-variant">{r.fromStation} – {r.toStation} ({r.startKm} to {r.endKm} km)</span>
+                    <span className="text-xs text-outline-variant italic">Reason: {r.reason}</span>
                   </div>
                 </div>
               ))
             ) : (
-              <div style={{ color: '#10b981', fontSize: '14px', padding: '10px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981' }}></div>
+              <div className="text-green-600 text-sm py-2 flex items-center gap-2 font-medium">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 No active speed restrictions
               </div>
             )}

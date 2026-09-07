@@ -103,24 +103,6 @@ const B2BWebhookView = () => {
         <p style={{ margin: 0, color: '#94a3b8', fontSize: '14px' }}>Powering third-party transit apps with sub-second railway telemetry</p>
       </div>
 
-      {/* ARCHITECTURE FLOW DIAGRAM */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px', backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px' }}>
-        <div style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', padding: '16px 24px', borderRadius: '8px', textAlign: 'center', flex: 1, fontWeight: 'bold' }}>
-          📡 RTIS/GPS Telemetry
-        </div>
-        <div style={{ color: '#64748b', fontSize: '24px', margin: '0 16px' }}>→</div>
-        <div style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', padding: '16px 24px', borderRadius: '8px', textAlign: 'center', flex: 1, fontWeight: 'bold' }}>
-          ⚙️ RES Core Engine
-        </div>
-        <div style={{ color: '#64748b', fontSize: '24px', margin: '0 16px' }}>→</div>
-        <div style={{ background: 'linear-gradient(135deg, #10b981, #047857)', padding: '16px 24px', borderRadius: '8px', textAlign: 'center', flex: 1, fontWeight: 'bold' }}>
-          🚀 Webhook Broadcaster
-        </div>
-        <div style={{ color: '#64748b', fontSize: '24px', margin: '0 16px' }}>→</div>
-        <div style={{ background: 'linear-gradient(135deg, #f59e0b, #b45309)', padding: '16px 24px', borderRadius: '8px', textAlign: 'center', flex: 1, fontWeight: 'bold' }}>
-          📱 Consumer Apps
-        </div>
-      </div>
 
       {/* METRICS & SUBSCRIBERS */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>

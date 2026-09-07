@@ -11,6 +11,7 @@ import StationDisplay from './components/StationDisplay';
 import ControlRoomView from './components/ControlRoomView';
 import PassengerAppView from './components/PassengerAppView';
 import B2BWebhookView from './components/B2BWebhookView';
+import AgentMCPView from './components/AgentMCPView';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -41,7 +42,7 @@ export default function App() {
   };
 
   // Full-screen views (no footer, no hero)
-  const fullScreenViews = ['visualize', 'station-ntes', 'control-room', 'passenger-app', 'b2b-webhooks'];
+  const fullScreenViews = ['visualize', 'station-ntes', 'control-room', 'passenger-app', 'b2b-webhooks', 'agent-mcp'];
   const isFullScreen = fullScreenViews.includes(activeNav);
 
   return (
@@ -54,6 +55,7 @@ export default function App() {
         {activeNav === 'control-room' && <ControlRoomView />}
         {activeNav === 'passenger-app' && <PassengerAppView />}
         {activeNav === 'b2b-webhooks' && <B2BWebhookView />}
+        {activeNav === 'agent-mcp' && <AgentMCPView />}
         
         {!isFullScreen && (
           <div className="flex flex-col w-full">
