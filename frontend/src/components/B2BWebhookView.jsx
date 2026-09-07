@@ -95,32 +95,31 @@ const B2BWebhookView = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: '#0f172a', color: '#e2e8f0', minHeight: '100%', padding: '24px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div className="bg-surface text-on-surface min-h-[calc(100vh-140px)] p-6 font-body-md">
       
       {/* HEADER */}
-      <div style={{ marginBottom: '32px', borderBottom: '1px solid #1e293b', paddingBottom: '16px' }}>
-        <h1 style={{ margin: '0 0 8px 0', fontSize: '24px', color: '#38bdf8', letterSpacing: '1px' }}>B2B REAL-TIME ETA INTEGRATION GATEWAY</h1>
-        <p style={{ margin: 0, color: '#94a3b8', fontSize: '14px' }}>Powering third-party transit apps with sub-second railway telemetry</p>
+      <div className="mb-8 border-b border-outline-variant/30 pb-4">
+        <h1 className="m-0 mb-2 text-2xl font-bold text-primary tracking-wide">B2B REAL-TIME ETA INTEGRATION GATEWAY</h1>
+        <p className="m-0 text-on-surface-variant text-sm">Powering third-party transit apps with sub-second railway telemetry</p>
       </div>
 
-
       {/* METRICS & SUBSCRIBERS */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         
         {/* SUBSCRIBERS */}
-        <div style={{ backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px' }}>
-          <h2 style={{ fontSize: '16px', margin: '0 0 16px 0', color: '#e2e8f0' }}>REGISTERED WEBHOOK SUBSCRIBERS</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/30">
+          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-2">REGISTERED WEBHOOK SUBSCRIBERS</h2>
+          <div className="flex flex-col gap-3">
             {subscribers.map((sub, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#0f172a', padding: '12px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: sub.status === 'Active' ? '#10b981' : '#eab308', fontSize: '12px' }}>●</span>
-                  <span style={{ fontWeight: '500' }}>{sub.name}</span>
+              <div key={i} className="flex items-center justify-between bg-surface p-3 rounded-lg border border-outline-variant/30">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${sub.status === 'Active' ? 'text-green-500' : 'text-amber-500'}`}>●</span>
+                  <span className="font-semibold text-on-surface text-sm">{sub.name}</span>
                 </div>
-                <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: '#94a3b8' }}>
-                  <span>{sub.status}</span>
+                <div className="flex gap-4 text-xs text-on-surface-variant items-center">
+                  <span className={sub.status === 'Active' ? 'text-green-600' : 'text-amber-600'}>{sub.status}</span>
                   <span>Last ping: {sub.ping}s ago</span>
-                  <span style={{ color: '#38bdf8' }}>{sub.users} users</span>
+                  <span className="text-secondary font-semibold">{sub.users} users</span>
                 </div>
               </div>
             ))}
@@ -128,38 +127,38 @@ const B2BWebhookView = () => {
         </div>
 
         {/* METRICS */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <div style={{ background: 'linear-gradient(180deg, #1e293b, #0f172a)', padding: '20px', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Throughput</div>
-            <div style={{ color: '#38bdf8', fontSize: '28px', fontWeight: 'bold' }}>42,000</div>
-            <div style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>req/s</div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Throughput</div>
+            <div className="text-secondary text-2xl font-bold">42,000</div>
+            <div className="text-outline-variant text-xs mt-1">req/s</div>
           </div>
-          <div style={{ background: 'linear-gradient(180deg, #1e293b, #0f172a)', padding: '20px', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Latency (P99)</div>
-            <div style={{ color: '#10b981', fontSize: '28px', fontWeight: 'bold' }}>18ms</div>
-            <div style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>average</div>
+          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Latency (P99)</div>
+            <div className="text-green-600 text-2xl font-bold">18ms</div>
+            <div className="text-outline-variant text-xs mt-1">average</div>
           </div>
-          <div style={{ background: 'linear-gradient(180deg, #1e293b, #0f172a)', padding: '20px', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Active Subscribers</div>
-            <div style={{ color: '#8b5cf6', fontSize: '28px', fontWeight: 'bold' }}>5.4M</div>
-            <div style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>clients</div>
+          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Active Subscribers</div>
+            <div className="text-primary text-2xl font-bold">5.4M</div>
+            <div className="text-outline-variant text-xs mt-1">clients</div>
           </div>
-          <div style={{ background: 'linear-gradient(180deg, #1e293b, #0f172a)', padding: '20px', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Events Processed</div>
-            <div style={{ color: '#f59e0b', fontSize: '28px', fontWeight: 'bold' }}>{eventCounter.toLocaleString()}</div>
-            <div style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>since boot</div>
+          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Events Processed</div>
+            <div className="text-amber-500 text-2xl font-bold">{eventCounter.toLocaleString()}</div>
+            <div className="text-outline-variant text-xs mt-1">since boot</div>
           </div>
         </div>
       </div>
 
       {/* EVENT STREAM & SAMPLE RESPONSE */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* EVENT STREAM */}
-        <div style={{ backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ fontSize: '16px', margin: '0 0 16px 0', color: '#e2e8f0' }}>LIVE WEBHOOK EVENT STREAM</h2>
-          <div style={{ backgroundColor: '#020617', padding: '16px', borderRadius: '8px', flex: 1, minHeight: '200px', maxHeight: '300px', overflowY: 'auto', fontFamily: 'monospace', fontSize: '12px', color: '#10b981', lineHeight: '1.6' }}>
-            {events.length === 0 ? <div style={{ color: '#64748b' }}>Waiting for events...</div> : events.map((ev, i) => (
+        <div className="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col">
+          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-2">LIVE WEBHOOK EVENT STREAM</h2>
+          <div className="bg-on-surface p-4 rounded-lg flex-1 min-h-[200px] max-h-[300px] overflow-y-auto font-mono text-xs text-green-400 leading-relaxed">
+            {events.length === 0 ? <div className="text-outline-variant">Waiting for events...</div> : events.map((ev, i) => (
               <div key={i}>{ev}</div>
             ))}
             <div ref={eventsEndRef} />
@@ -167,9 +166,9 @@ const B2BWebhookView = () => {
         </div>
 
         {/* SAMPLE RESPONSE */}
-        <div style={{ backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ fontSize: '16px', margin: '0 0 16px 0', color: '#e2e8f0' }}>SAMPLE API PAYLOAD</h2>
-          <div style={{ backgroundColor: '#020617', padding: '16px', borderRadius: '8px', flex: 1, minHeight: '200px', maxHeight: '300px', overflowY: 'auto', fontFamily: 'monospace', fontSize: '12px', color: '#38bdf8', whiteSpace: 'pre' }}>
+        <div className="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col">
+          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-2">SAMPLE API PAYLOAD</h2>
+          <div className="bg-on-surface p-4 rounded-lg flex-1 min-h-[200px] max-h-[300px] overflow-y-auto font-mono text-xs text-secondary whitespace-pre">
             {getSamplePayload()}
           </div>
         </div>

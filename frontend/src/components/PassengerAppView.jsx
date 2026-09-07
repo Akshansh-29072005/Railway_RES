@@ -59,38 +59,14 @@ const PassengerAppView = () => {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'row',
-      height: '100%',
-      width: '100%',
-      backgroundColor: '#0f172a', // Dark theme background
-      color: '#f8fafc',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      padding: '24px',
-      boxSizing: 'border-box',
-      gap: '40px',
-      overflow: 'hidden'
-    }}>
+    <div className="flex flex-row w-full bg-surface text-on-surface font-body-md p-6 box-border gap-10 overflow-hidden min-h-[calc(100vh-140px)]">
       {/* Train Selector Left Panel */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '200px'
-      }}>
-        <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', color: '#94a3b8' }}>Select Train</h3>
+      <div className="flex flex-col w-[200px]">
+        <h3 className="m-0 mb-4 text-lg font-bold text-primary">Select Train</h3>
         <select 
           value={selectedTrainNum}
           onChange={(e) => setSelectedTrainNum(e.target.value)}
-          style={{
-            padding: '8px 12px',
-            backgroundColor: '#1e293b',
-            color: '#f8fafc',
-            border: '1px solid #334155',
-            borderRadius: '6px',
-            fontSize: '14px',
-            outline: 'none'
-          }}
+          className="px-3 py-2 bg-surface-container text-on-surface border border-outline-variant/30 rounded-lg text-sm outline-none focus:border-primary shadow-sm"
         >
           {activeTrains.map(t => (
             <option key={t.trainNumber} value={t.trainNumber}>
