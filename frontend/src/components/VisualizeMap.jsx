@@ -19,8 +19,12 @@ export default function VisualizeMap() {
   const [state, setState] = useState(null);
   const [mode, setMode] = useState('passenger'); // passenger | control | metrics | whatif
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const [whatIfStation, setWhatIfStation] = useState('SZB');
-  const [whatIfDelay, setWhatIfDelay] = useState(15);
+  // Disruption state
+  const [disruptionStation, setDisruptionStation] = useState('SZB');
+  const [targetTrain, setTargetTrain] = useState('ALL');
+  const [disruptionAmount, setDisruptionAmount] = useState(30);
+  const [disruptionUnit, setDisruptionUnit] = useState('sec');
+  const [disruptionReason, setDisruptionReason] = useState('SIGNAL');
   const simRef = useRef(null);
 
   useEffect(() => {
@@ -39,9 +43,22 @@ export default function VisualizeMap() {
     if (simRef.current) simRef.current.togglePause();
   };
 
-  const handleInjectDelay = () => {
+  const handleInjectDisruption = (preset = null) => {
     if (simRef.current) {
-      simRef.current.extendBlock(whatIfStation, whatIfDelay);
+      if (preset) {
+        simRef.current.injectDisruption(preset.stationCode, preset.trainNumber, preset.amount, preset.unit, preset.reason, preset.speedLimit);
+      } else {
+        // Form based
+        const limitMap = { 'SIGNAL': 0, 'CONGESTION': 10, 'TSR': 20, 'CROSSING': 0 };
+        const sLimit = limitMap[disruptionReason] ?? 0;
+        simRef.current.injectDisruption(disruptionStation, targetTrain, disruptionAmount, disruptionUnit, disruptionReason, sLimit);
+      }
+    }
+  };
+
+  const handleClearDisruptions = () => {
+    if (simRef.current) {
+      simRef.current.clearDisruptions();
     }
   };
 

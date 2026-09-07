@@ -127,20 +127,20 @@ export const RESTRICTIONS = [
 // Direction: DN = Raipur → Durg, UP = Durg → Raipur
 export const TRAINS = [
   {
-    number: '22436',
-    name: 'VANDE BHARAT EXPRESS',
-    nameHi: 'वंदे भारत एक्सप्रेस',
+    number: '22435',
+    name: 'VANDE BHARAT EXP (UP)',
+    nameHi: 'वंदे भारत एक्सप्रेस (अप)',
     type: 'PREMIUM_SUPERFAST_EMU',
     rake: '16_COACH_CHAIR_CAR',
-    origin: 'NDLS',
-    destination: 'BSB',
-    direction: 'DN',
+    origin: 'BSB',
+    destination: 'NDLS',
+    direction: 'UP',
     maxSpeed: 130,
     color: '#0ea5e9',
     schedule: [
-      { station: 'R',    arr: 860, dep: 865, platform: 3 }, // 14:20 → 14:25
-      { station: 'SZB',  arr: 878, dep: 879, platform: 1 }, // 14:38
-      { station: 'DURG', arr: 898, dep: 903, platform: 1 }, // 14:58 → 15:03
+      { station: 'DURG', arr: 870, dep: 875, platform: 2 }, // 14:30 → 14:35
+      { station: 'SZB',  arr: 893, dep: 894, platform: 2 }, // 14:53
+      { station: 'R',    arr: 910, dep: 915, platform: 4 }, // 15:10 → 15:15
     ],
   },
   {
@@ -161,24 +161,6 @@ export const TRAINS = [
     ],
   },
   {
-    number: '12860',
-    name: 'GITANJALI EXPRESS',
-    nameHi: 'गीतांजलि एक्सप्रेस',
-    type: 'SUPERFAST',
-    rake: '22_COACH_LHB',
-    origin: 'HWH',
-    destination: 'CSTM',
-    direction: 'DN',
-    maxSpeed: 120,
-    color: '#8b5cf6',
-    schedule: [
-      { station: 'R',    arr: 910, dep: 915, platform: 4 }, // 15:10 → 15:15
-      { station: 'SZB',  arr: 928, dep: 929, platform: 2 }, // 15:28
-      { station: 'BQR',  arr: 945, dep: 946, platform: 1 }, // 15:45
-      { station: 'DURG', arr: 955, dep: 960, platform: 2 }, // 15:55 → 16:00
-    ],
-  },
-  {
     number: '18237',
     name: 'CHHATTISGARH EXPRESS',
     nameHi: 'छत्तीसगढ़ एक्सप्रेस',
@@ -195,44 +177,6 @@ export const TRAINS = [
       { station: 'SZB',  arr: 958, dep: 960, platform: 1 }, // 15:58 → 16:00
       { station: 'KOU',  arr: 972, dep: 973, platform: 2 }, // 16:12
       { station: 'DURG', arr: 990, dep: null, platform: 4 }, // 16:30
-    ],
-  },
-  {
-    number: '12840',
-    name: 'HOWRAH MAIL',
-    nameHi: 'हावड़ा मेल',
-    type: 'MAIL_EXPRESS',
-    rake: '22_COACH_LHB',
-    origin: 'HWH',
-    destination: 'CSTM',
-    direction: 'DN',
-    maxSpeed: 110,
-    color: '#ef4444',
-    schedule: [
-      { station: 'R',    arr: 965, dep: 970, platform: 5 }, // 16:05 → 16:10
-      { station: 'SZB',  arr: 985, dep: 986, platform: 2 }, // 16:25
-      { station: 'DURG', arr: 1005, dep: 1010, platform: 5 }, // 16:45 → 16:50
-    ],
-  },
-  {
-    number: '12058',
-    name: 'JAN SHATABDI EXPRESS',
-    nameHi: 'जन शताब्दी एक्सप्रेस',
-    type: 'SUPERFAST',
-    rake: '12_COACH_LHB',
-    origin: 'R',
-    destination: 'DURG',
-    direction: 'DN',
-    maxSpeed: 110,
-    color: '#06b6d4',
-    schedule: [
-      { station: 'R',    arr: null, dep: 870, platform: 6 }, // 14:30
-      { station: 'SRWN', arr: 878, dep: 879, platform: 2 }, // 14:38
-      { station: 'SZB',  arr: 888, dep: 890, platform: 2 }, // 14:48 → 14:50
-      { station: 'KOU',  arr: 900, dep: 901, platform: 1 }, // 15:00
-      { station: 'BFC',  arr: 910, dep: 911, platform: 1 }, // 15:10
-      { station: 'BQR',  arr: 918, dep: 919, platform: 2 }, // 15:18
-      { station: 'DURG', arr: 928, dep: null, platform: 2 }, // 15:28
     ],
   },
   {
@@ -256,42 +200,6 @@ export const TRAINS = [
       { station: 'BPHB', arr: 925, dep: 927, platform: 1 }, // 15:25 → 15:27
       { station: 'BQR',  arr: 935, dep: 937, platform: 3 }, // 15:35 → 15:37
       { station: 'DURG', arr: 950, dep: null, platform: 3 }, // 15:50
-    ],
-  },
-  // UP direction trains (Durg → Raipur)
-  {
-    number: '22435',
-    name: 'VANDE BHARAT EXP (UP)',
-    nameHi: 'वंदे भारत एक्सप्रेस (अप)',
-    type: 'PREMIUM_SUPERFAST_EMU',
-    rake: '16_COACH_CHAIR_CAR',
-    origin: 'BSB',
-    destination: 'NDLS',
-    direction: 'UP',
-    maxSpeed: 130,
-    color: '#0ea5e9',
-    schedule: [
-      { station: 'DURG', arr: 870, dep: 875, platform: 2 }, // 14:30 → 14:35
-      { station: 'SZB',  arr: 893, dep: 894, platform: 2 }, // 14:53
-      { station: 'R',    arr: 910, dep: 915, platform: 4 }, // 15:10 → 15:15
-    ],
-  },
-  {
-    number: '12859',
-    name: 'GITANJALI EXP (UP)',
-    nameHi: 'गीतांजलि एक्सप्रेस (अप)',
-    type: 'SUPERFAST',
-    rake: '22_COACH_LHB',
-    origin: 'CSTM',
-    destination: 'HWH',
-    direction: 'UP',
-    maxSpeed: 120,
-    color: '#8b5cf6',
-    schedule: [
-      { station: 'DURG', arr: 920, dep: 925, platform: 1 }, // 15:20 → 15:25
-      { station: 'BQR',  arr: 933, dep: 934, platform: 2 }, // 15:33
-      { station: 'SZB',  arr: 948, dep: 949, platform: 1 }, // 15:48
-      { station: 'R',    arr: 965, dep: 970, platform: 1 }, // 16:05 → 16:10
     ],
   },
   {
