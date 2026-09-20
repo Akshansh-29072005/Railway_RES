@@ -1,98 +1,291 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { router } from "expo-router";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import PrimaryButton from "../components/PrimaryButton";
+import { COLORS, RADIUS, SPACING } from "../constants/theme";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+export default function LoginScreen() {
+  const [railwayId, setRailwayId] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = () => {
+    setError("");
+
+    if (!railwayId.trim() || !password.trim()) {
+      setError("Please enter Railway ID and password.");
+      return;
+    }
+
+    /*
+      Demo authentication.
+
+      Demo:
+      Railway ID: LP12345
+      Password: railway123
+
+      Later this will connect to your backend/database.
+    */
+
+    if (
+      railwayId.trim().toUpperCase() === "LP12345" &&
+      password === "railway123"
+    ) {
+      router.replace("/train");
+    } else {
+      setError(
+        "Invalid Railway ID or password. Use LP12345 / railway123 for demo."
+      );
+    }
+  };
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.logoContainer}>
+            <View style={styles.logoCircle}>
+              <Text style={styles.logoTrain}>🚆</Text>
+            </View>
+          </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+          <Text style={styles.brand}>GUARD APP</Text>
+          <Text style={styles.title}>Portal</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <Text style={styles.description}>
+            Secure access to railway operations,
+            duty information and live location tracking.
+          </Text>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+          <View style={styles.loginCard}>
+            <Text style={styles.cardTitle}>Railway GUARD Login</Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+            <Text style={styles.label}>RAILWAY ID</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Railway ID"
+              placeholderTextColor="#999"
+              value={railwayId}
+              onChangeText={setRailwayId}
+              autoCapitalize="characters"
+              autoCorrect={false}
+            />
+
+            <Text style={styles.label}>PASSWORD</Text>
+
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Enter password"
+                placeholderTextColor="#999"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+
+              <TouchableOpacity
+                onPress={() =>
+                  setShowPassword(!showPassword)
+                }
+              >
+                <Text style={styles.showPassword}>
+                  {showPassword ? "HIDE" : "SHOW"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {error ? (
+              <View style={styles.errorBox}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
+
+            <PrimaryButton
+              title="LOGIN TO PORTAL"
+              onPress={handleLogin}
+            />
+
+            <Text style={styles.demoText}>
+              Demo: LP12345 / railway123
+            </Text>
+          </View>
+
+          <Text style={styles.footer}>
+            Indian Railways
+          </Text>
+
+          <Text style={styles.version}>Version 1.0.0</Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    backgroundColor: COLORS.background,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+
+  container: {
+    flexGrow: 1,
+    padding: SPACING.xxl,
+    justifyContent: "center",
   },
+
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  logoCircle: {
+    width: 78,
+    height: 78,
+    borderRadius: 39,
+    backgroundColor: COLORS.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  logoTrain: {
+    fontSize: 38,
+  },
+
+  brand: {
+    textAlign: "center",
+    fontSize: 12,
+    fontWeight: "800",
+    color: COLORS.primary,
+    letterSpacing: 2,
+  },
+
   title: {
-    textAlign: 'center',
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "800",
+    color: COLORS.text,
+    marginTop: 2,
   },
-  code: {
-    textTransform: 'uppercase',
+
+  description: {
+    textAlign: "center",
+    color: COLORS.textSecondary,
+    fontSize: 13,
+    lineHeight: 20,
+    marginTop: 12,
+    marginBottom: 28,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  loginCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.xl,
+    padding: SPACING.xxl,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+
+  cardTitle: {
+    fontSize: 19,
+    fontWeight: "800",
+    color: COLORS.text,
+    marginBottom: 24,
+  },
+
+  label: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: COLORS.textSecondary,
+    letterSpacing: 0.8,
+    marginBottom: 8,
+  },
+
+  input: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: 15,
+    fontSize: 15,
+    color: COLORS.text,
+    marginBottom: 18,
+    backgroundColor: "#FAFAFA",
+  },
+
+  passwordContainer: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    backgroundColor: "#FAFAFA",
+    marginBottom: 18,
+  },
+
+  passwordInput: {
+    flex: 1,
+    fontSize: 15,
+    color: COLORS.text,
+  },
+
+  showPassword: {
+    color: COLORS.primary,
+    fontSize: 10,
+    fontWeight: "800",
+  },
+
+  errorBox: {
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
+    padding: 10,
+    marginBottom: 15,
+  },
+
+  errorText: {
+    color: COLORS.primary,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+
+  demoText: {
+    textAlign: "center",
+    fontSize: 11,
+    color: COLORS.textLight,
+    marginTop: 14,
+  },
+
+  footer: {
+    textAlign: "center",
+    color: COLORS.textSecondary,
+    fontSize: 11,
+    marginTop: 25,
+  },
+
+  version: {
+    textAlign: "center",
+    color: COLORS.textLight,
+    fontSize: 10,
+    marginTop: 5,
   },
 });
