@@ -1,4 +1,8 @@
-import React from 'react';
+with open('frontend/src/components/VisualizeMap.jsx', 'r') as f:
+    content = f.read()
+
+# I will just write a new clean file for VisualizeMap.jsx since there's a lot of old junk at the bottom.
+clean = """import React from 'react';
 import MapComponent from './MapComponent';
 
 export default function VisualizeMap() {
@@ -31,3 +35,7 @@ export default function VisualizeMap() {
     </div>
   );
 }
+"""
+with open('frontend/src/components/VisualizeMap.jsx', 'w') as f:
+    f.write(clean)
+print("Done")
