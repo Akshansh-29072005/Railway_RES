@@ -21,7 +21,8 @@ import {
 
 // ─── SIMULATION CONFIGURATION ───────────────────────────────────
 const DEFAULT_TICK_INTERVAL_MS = 1000; // 1 second real-time per tick
-const CORRIDOR_LENGTH_KM = 40;
+const CORRIDOR_LENGTH_KM = 131.622;
+const START_KM = 828.687;
 
 // ─── TRAIN STATE ────────────────────────────────────────────────
 function createTrainState(train, simTimeMin) {
@@ -34,7 +35,7 @@ function createTrainState(train, simTimeMin) {
   const endTime = (lastStop.arr || lastStop.dep);
 
   // Initial km based on direction
-  let initialKm = train.direction === 'DN' ? -5 : CORRIDOR_LENGTH_KM + 5;
+  let initialKm = train.direction === 'DN' ? START_KM - 5 : START_KM + CORRIDOR_LENGTH_KM + 5;
 
   return {
     trainNumber: train.number,

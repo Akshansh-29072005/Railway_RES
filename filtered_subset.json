@@ -1,0 +1,455 @@
+{
+  "tracks": [
+    {
+      "@id": "way/60084668",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "3",
+      "railway": "rail",
+      "source": "landsat",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/60084670",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "source": "landsat",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/60084671",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "3",
+      "railway": "rail",
+      "source": "landsat",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/65310807",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "spur",
+      "source": "landsat",
+      "usage": "industrial"
+    },
+    {
+      "@id": "way/65310808",
+      "electrified": "no",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "yard"
+    },
+    {
+      "@id": "way/65310816",
+      "cutting": "yes",
+      "electrified": "construction",
+      "embankment": "yes",
+      "gauge": "1676",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "source:cutting": "Maxar",
+      "source:geometry": "Maxar",
+      "usage": "branch"
+    },
+    {
+      "@id": "way/65310819",
+      "electrified": "no",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "spur",
+      "usage": "industrial"
+    },
+    {
+      "@id": "way/77355843",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/77362588",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "source": "landsat",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/100492969",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/100493194",
+      "electrified": "no",
+      "gauge": "1676",
+      "railway": "rail",
+      "source": "landsat;MaxarPremium"
+    },
+    {
+      "@id": "way/100493294",
+      "embankment": "yes",
+      "gauge": "762",
+      "railway": "rail",
+      "usage": "branch"
+    },
+    {
+      "@id": "way/100493334",
+      "railway": "rail"
+    },
+    {
+      "@id": "way/100493351",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "name": "Raipur Bypass",
+      "railway": "rail",
+      "railway:preferred_direction": "forward",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/101272728",
+      "electrified": "no",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "spur",
+      "usage": "industrial"
+    },
+    {
+      "@id": "way/101272730",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "name": "Gondia - Balaghat line",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/101940026",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/101940030",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "name": "Gondia-Ballarshah Railway Line",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/101940036",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "siding"
+    },
+    {
+      "@id": "way/101940041",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "source": "gps",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/119483470",
+      "railway": "rail",
+      "service": "spur"
+    },
+    {
+      "@id": "way/119483475",
+      "railway": "rail",
+      "service": "spur"
+    },
+    {
+      "@id": "way/119483476",
+      "railway": "rail",
+      "service": "siding"
+    },
+    {
+      "@id": "way/119483495",
+      "railway": "rail",
+      "service": "siding"
+    },
+    {
+      "@id": "way/119508115",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/119508118",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/119508122",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "source": "landsat",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/120666187",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "name": "Gondia - Balaghat line",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/121076648",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/121076654",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/129773740",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "yard",
+      "source": "landsat",
+      "usage": "industrial"
+    },
+    {
+      "@id": "way/129775661",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "siding",
+      "source": "landsat;MaxarPremium",
+      "source:geometry": "MaxarPremium, Esri, retrieved by JOSM 07/2021",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/129775666",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "service": "siding",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/154372543",
+      "railway": "rail",
+      "service": "siding"
+    },
+    {
+      "@id": "way/154372544",
+      "railway": "rail",
+      "service": "siding"
+    },
+    {
+      "@id": "way/154372545",
+      "railway": "rail",
+      "service": "siding"
+    },
+    {
+      "@id": "way/161099610",
+      "bridge": "yes",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/161099612",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/178646985",
+      "electrified": "construction",
+      "embankment": "yes",
+      "gauge": "1676",
+      "name": "Dalli - Raoghat New Line (u/c)",
+      "railway": "rail",
+      "usage": "branch"
+    },
+    {
+      "@id": "way/244390064",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390065",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390066",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "source": "gps",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390067",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "source": "gps",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390068",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390069",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "source": "gps",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390070",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "railway": "rail",
+      "source": "gps",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390071",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "passenger_lines": "2",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390076",
+      "bridge": "yes",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "layer": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390077",
+      "bridge": "yes",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "layer": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    },
+    {
+      "@id": "way/244390079",
+      "bridge": "yes",
+      "electrified": "contact_line",
+      "frequency": "50",
+      "gauge": "1676",
+      "layer": "1",
+      "railway": "rail",
+      "usage": "main",
+      "voltage": "25000"
+    }
+  ],
+  "stations": []
+}

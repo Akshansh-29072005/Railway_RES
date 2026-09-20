@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { minsToTime } from '../data/corridorData';
 import { getSimulator } from '../services/telemetrySimulator';
 
 const B2BWebhookView = () => {
   const [simState, setSimState] = useState(null);
   const [events, setEvents] = useState([]);
-  const [pings, setPings] = useState({
-    irctc: 2, google: 1, mmt: 4, ixigo: 3, wimt: 45
-  });
   const [eventCounter, setEventCounter] = useState(842300);
   const eventsEndRef = useRef(null);
+
+  // We only show one subscriber now.
+  const [ping, setPing] = useState(2);
 
   useEffect(() => {
     const sim = getSimulator();
@@ -21,8 +20,7 @@ const B2BWebhookView = () => {
         const train = state.trains[Math.floor(Math.random() * state.trains.length)];
         const eventTypes = ['DELAY_THRESHOLD', 'ETA_UPDATE', 'PLATFORM_CHANGE'];
         const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
-        const consumers = ['IRCTC', 'Google Transit', 'MakeMyTrip', 'Ixigo', 'Where Is My Train'];
-        const consumer = consumers[Math.floor(Math.random() * consumers.length)];
+        const consumer = 'Train Tracking App';
         
         let msg = '';
         if (eventType === 'DELAY_THRESHOLD') {
@@ -48,20 +46,15 @@ const B2BWebhookView = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setPings(prev => ({
-        irctc: (prev.irctc + 1) % 5,
-        google: (prev.google + 1) % 4,
-        mmt: (prev.mmt + 1) % 6,
-        ixigo: (prev.ixigo + 1) % 5,
-        wimt: prev.wimt > 50 ? 40 : prev.wimt + 1
-      }));
+      setPing(prev => (prev + 1) % 5);
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
     if (eventsEndRef.current) {
-      eventsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      const parent = eventsEndRef.current.parentElement;
+      parent.scrollTop = parent.scrollHeight;
     }
   }, [events]);
 
@@ -86,95 +79,150 @@ const B2BWebhookView = () => {
     }, null, 2);
   };
 
-  const subscribers = [
-    { name: 'IRCTC Rail Connect', status: 'Active', ping: pings.irctc, users: '184K' },
-    { name: 'Google Transit Feed', status: 'Active', ping: pings.google, users: '2.1M' },
-    { name: 'MakeMyTrip Core', status: 'Active', ping: pings.mmt, users: '890K' },
-    { name: 'Ixigo Gateway', status: 'Active', ping: pings.ixigo, users: '1.4M' },
-    { name: 'Where Is My Train', status: 'Delayed', ping: pings.wimt, users: '3.2M' },
-  ];
-
   return (
-    <div className="bg-surface text-on-surface min-h-[calc(100vh-140px)] p-6 font-body-md">
+    <div className="flex flex-col lg:flex-row w-full bg-surface text-on-surface font-body-md p-6 box-border gap-8 overflow-hidden min-h-[calc(100vh-140px)]">
       
-      {/* HEADER */}
-      <div className="mb-8 border-b border-outline-variant/30 pb-4">
-        <h1 className="m-0 mb-2 text-2xl font-bold text-primary tracking-wide">B2B REAL-TIME ETA INTEGRATION GATEWAY</h1>
-        <p className="m-0 text-on-surface-variant text-sm">Powering third-party transit apps with sub-second railway telemetry</p>
-      </div>
-
-      {/* METRICS & SUBSCRIBERS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      {/* LEFT PANEL: Live Metrics, Subscribers, Event Stream */}
+      <div className="flex flex-col w-full lg:w-[350px] gap-6 shrink-0 h-full overflow-y-auto pr-2 pb-6">
         
+        {/* LIVE METRICS */}
+        <div>
+          <h3 className="m-0 mb-3 text-sm font-bold text-primary border-b border-outline-variant/30 pb-2 uppercase tracking-wide">Live Gateway Metrics</h3>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+              <div className="text-on-surface-variant text-[10px] mb-1 uppercase tracking-wide text-center">Throughput</div>
+              <div className="text-secondary text-lg font-bold">42,000</div>
+              <div className="text-outline-variant text-[10px] mt-1">req/s</div>
+            </div>
+            <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+              <div className="text-on-surface-variant text-[10px] mb-1 uppercase tracking-wide text-center">Latency (P99)</div>
+              <div className="text-green-600 text-lg font-bold">18ms</div>
+              <div className="text-outline-variant text-[10px] mt-1">average</div>
+            </div>
+            <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+              <div className="text-on-surface-variant text-[10px] mb-1 uppercase tracking-wide text-center">Active Subs</div>
+              <div className="text-primary text-lg font-bold">5.4M</div>
+              <div className="text-outline-variant text-[10px] mt-1">clients</div>
+            </div>
+            <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
+              <div className="text-on-surface-variant text-[10px] mb-1 uppercase tracking-wide text-center">Events</div>
+              <div className="text-amber-500 text-lg font-bold">{eventCounter.toLocaleString()}</div>
+              <div className="text-outline-variant text-[10px] mt-1">processed</div>
+            </div>
+          </div>
+        </div>
+
         {/* SUBSCRIBERS */}
-        <div className="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/30">
-          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-2">REGISTERED WEBHOOK SUBSCRIBERS</h2>
+        <div className="bg-surface-container-low rounded-xl p-5 shadow-sm border border-outline-variant/30">
+          <h2 className="m-0 mb-3 text-sm font-bold text-primary border-b border-outline-variant/30 pb-2 uppercase tracking-wide">REGISTERED SUBSCRIBERS</h2>
           <div className="flex flex-col gap-3">
-            {subscribers.map((sub, i) => (
-              <div key={i} className="flex items-center justify-between bg-surface p-3 rounded-lg border border-outline-variant/30">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs ${sub.status === 'Active' ? 'text-green-500' : 'text-amber-500'}`}>●</span>
-                  <span className="font-semibold text-on-surface text-sm">{sub.name}</span>
-                </div>
-                <div className="flex gap-4 text-xs text-on-surface-variant items-center">
-                  <span className={sub.status === 'Active' ? 'text-green-600' : 'text-amber-600'}>{sub.status}</span>
-                  <span>Last ping: {sub.ping}s ago</span>
-                  <span className="text-secondary font-semibold">{sub.users} users</span>
-                </div>
+            <div className="flex items-center justify-between bg-surface p-3 rounded-lg border border-outline-variant/30">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-green-500">●</span>
+                <span className="font-semibold text-on-surface text-sm">Train Tracking App</span>
               </div>
-            ))}
+              <div className="flex gap-3 text-xs text-on-surface-variant items-center">
+                <span className="text-green-600">Active</span>
+                <span>Ping: {ping}s</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* METRICS */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
-            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Throughput</div>
-            <div className="text-secondary text-2xl font-bold">42,000</div>
-            <div className="text-outline-variant text-xs mt-1">req/s</div>
-          </div>
-          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
-            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Latency (P99)</div>
-            <div className="text-green-600 text-2xl font-bold">18ms</div>
-            <div className="text-outline-variant text-xs mt-1">average</div>
-          </div>
-          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
-            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Active Subscribers</div>
-            <div className="text-primary text-2xl font-bold">5.4M</div>
-            <div className="text-outline-variant text-xs mt-1">clients</div>
-          </div>
-          <div className="bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-center items-center shadow-sm">
-            <div className="text-on-surface-variant text-xs mb-2 uppercase tracking-wide">Events Processed</div>
-            <div className="text-amber-500 text-2xl font-bold">{eventCounter.toLocaleString()}</div>
-            <div className="text-outline-variant text-xs mt-1">since boot</div>
-          </div>
-        </div>
-      </div>
-
-      {/* EVENT STREAM & SAMPLE RESPONSE */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
         {/* EVENT STREAM */}
-        <div className="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col">
-          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-2">LIVE WEBHOOK EVENT STREAM</h2>
-          <div className="bg-on-surface p-4 rounded-lg flex-1 min-h-[200px] max-h-[300px] overflow-y-auto font-mono text-xs text-green-400 leading-relaxed">
+        <div className="bg-surface-container-low rounded-xl p-5 shadow-sm border border-outline-variant/30 flex flex-col flex-1 min-h-[300px]">
+          <h2 className="m-0 mb-3 text-sm font-bold text-primary border-b border-outline-variant/30 pb-2 uppercase tracking-wide">LIVE WEBHOOK EVENT STREAM</h2>
+          <div className="bg-on-surface p-4 rounded-lg flex-1 overflow-y-auto font-mono text-[11px] text-green-400 leading-relaxed max-h-[400px]">
             {events.length === 0 ? <div className="text-outline-variant">Waiting for events...</div> : events.map((ev, i) => (
               <div key={i}>{ev}</div>
             ))}
             <div ref={eventsEndRef} />
           </div>
         </div>
-
-        {/* SAMPLE RESPONSE */}
-        <div className="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col">
-          <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-2">SAMPLE API PAYLOAD</h2>
-          <div className="bg-on-surface p-4 rounded-lg flex-1 min-h-[200px] max-h-[300px] overflow-y-auto font-mono text-xs text-secondary whitespace-pre">
-            {getSamplePayload()}
-          </div>
-        </div>
-
       </div>
 
+      {/* RIGHT PANEL: Documentation */}
+      <div className="flex flex-col flex-1 gap-6 overflow-y-auto rounded-xl p-6 bg-[#1e293b] text-slate-300 shadow-xl border border-slate-800">
+        <div className="border-b border-slate-700 pb-4">
+          <h1 className="m-0 mb-2 text-2xl font-bold text-white tracking-wide">Webhook Integration Documentation</h1>
+          <p className="m-0 text-slate-400 text-sm">Integrate with the RES Telemetry Platform to receive real-time predictive ETAs and alerts directly to your application.</p>
+        </div>
+
+        <div className="flex flex-col gap-6">
+          
+          {/* Card 1 */}
+          <div className="bg-[#0f172a] rounded-xl border border-slate-700 shadow-md overflow-hidden flex flex-col">
+            <div className="bg-[#0f172a] px-6 py-4 border-b border-slate-700 flex items-center gap-4">
+              <div className="bg-sky-500 text-white text-xs font-bold px-2 py-1 rounded w-fit">WEBHOOK</div>
+              <span className="font-mono text-sm text-[#38bdf8] font-semibold">/api/v2.4/webhook/train-eta-updated</span>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <p className="text-sm text-slate-300 m-0">
+                Fired whenever the ML engine recalculates a train's ETA, factoring in current speed, network congestion, and historical patterns. This is the primary event for updating user-facing boards.
+              </p>
+              <div className="bg-[#1e293b] p-4 rounded-lg overflow-x-auto font-mono text-xs text-green-300 whitespace-pre">
+                {getSamplePayload()}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2 */}
+          <div className="bg-[#0f172a] rounded-xl border border-slate-700 shadow-md overflow-hidden flex flex-col">
+            <div className="bg-[#0f172a] px-6 py-4 border-b border-slate-700 flex items-center gap-4">
+              <div className="bg-sky-500 text-white text-xs font-bold px-2 py-1 rounded w-fit">WEBHOOK</div>
+              <span className="font-mono text-sm text-[#38bdf8] font-semibold">/api/v2.4/webhook/platform-changed</span>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <p className="text-sm text-slate-300 m-0">
+                Predicts and alerts on arrival platform allocations based on station layout, current occupancy, and typical allocation patterns. Triggered when certainty exceeds 90%.
+              </p>
+              <div className="bg-[#1e293b] p-4 rounded-lg overflow-x-auto font-mono text-xs text-green-300 whitespace-pre">
+{`{
+  "eventId": "evt_platform_998822",
+  "timestamp": "${new Date().toISOString()}",
+  "eventType": "train.platform.changed",
+  "data": {
+    "trainNumber": "22436",
+    "station": "BSP",
+    "predicted_platform": 3,
+    "probability": 0.88,
+    "alternatives": [
+      { "platform": 4, "probability": 0.12 }
+    ]
+  }
+}`}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3 */}
+          <div className="bg-[#0f172a] rounded-xl border border-slate-700 shadow-md overflow-hidden flex flex-col">
+            <div className="bg-[#0f172a] px-6 py-4 border-b border-slate-700 flex items-center gap-4">
+              <div className="bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded w-fit">ALERT</div>
+              <span className="font-mono text-sm text-[#38bdf8] font-semibold">/api/v2.4/webhook/delay-threshold-exceeded</span>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <p className="text-sm text-slate-300 m-0">
+                Triggered automatically if a train's delay grows beyond a pre-configured threshold (default 15 mins). Useful for pushing critical notifications to transit users.
+              </p>
+              <div className="bg-[#1e293b] p-4 rounded-lg overflow-x-auto font-mono text-xs text-green-300 whitespace-pre">
+{`{
+  "eventId": "evt_delay_102030",
+  "timestamp": "${new Date().toISOString()}",
+  "eventType": "train.delay.threshold_exceeded",
+  "data": {
+    "trainNumber": "22436",
+    "currentDelayMinutes": 22,
+    "thresholdMinutes": 15,
+    "reason_code": "TSR_CONGESTION"
+  }
+}`}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 };

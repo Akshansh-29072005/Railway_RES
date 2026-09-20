@@ -61,7 +61,7 @@ export default function App() {
           <div className="flex flex-col w-full">
             <HeroBanner onOpenAuth={handleOpenAuth} onDownloadDocs={handleDownloadDocs} />
             
-            <CategoryFilter activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
+
 
             <ApiExplorer trainNo={trainNo} setTrainNo={setTrainNo} />
 

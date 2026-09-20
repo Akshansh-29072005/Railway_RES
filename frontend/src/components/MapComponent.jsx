@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { STATIONS, TRACK_PATH, RESTRICTIONS } from '../data/corridorData';
+import { STATIONS, TRACK_PATH, MINERAL_CORRIDOR_PATH, BYPASS_PATH, SOUTHERN_LOOPS_PATH, BHILAI_YARD_PATHS, RESTRICTIONS } from '../data/corridorData';
+import { ALL_MAIN_TRACKS, ALL_YARD_TRACKS } from '../data/allTracksData';
 import { getSimulator } from '../services/telemetrySimulator';
 
 // Signal aspect colors
@@ -33,7 +34,7 @@ const MapComponent = () => {
 
     // ── Initialize Map ──────────────────────────────────────
     const map = L.map(mapRef.current, {
-      center: [21.23, 81.45],
+      center: [21.365, 81.670], // Mandhar (approx middle)
       zoom: 11,
       scrollWheelZoom: true,
       zoomControl: true,
@@ -45,13 +46,34 @@ const MapComponent = () => {
       maxZoom: 19,
     }).addTo(map);
 
-    // ── Draw Track Polyline ─────────────────────────────────
+    // ── Draw Track Polylines ─────────────────────────────────
+    // The invisible baseline track for the simulator
     L.polyline(TRACK_PATH, {
-      color: '#ffffff',
-      weight: 3,
-      opacity: 0.6,
-      dashArray: '8, 6',
+      color: 'transparent',
+      weight: 1,
     }).addTo(map);
+
+    // Draw ALL exact main tracks from OSM (Up, Down, Middle, etc)
+    if (ALL_MAIN_TRACKS && ALL_MAIN_TRACKS.length > 0) {
+      ALL_MAIN_TRACKS.forEach(track => {
+        L.polyline(track, {
+          color: '#ffcba4', // Peach color
+          weight: 2,
+          opacity: 0.8,
+        }).addTo(map);
+      });
+    }
+
+    // Draw ALL yard, siding, and loop tracks from OSM
+    if (ALL_YARD_TRACKS && ALL_YARD_TRACKS.length > 0) {
+      ALL_YARD_TRACKS.forEach(track => {
+        L.polyline(track, {
+          color: '#fff44f', // Lemon yellow
+          weight: 1.2,
+          opacity: 0.6,
+        }).addTo(map);
+      });
+    }
 
     // ── Draw TSR/PSR Zones ──────────────────────────────────
     RESTRICTIONS.forEach(r => {

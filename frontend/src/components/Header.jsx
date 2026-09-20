@@ -27,7 +27,6 @@ export default function Header({ activeNav, setActiveNav }) {
     { id: 'station-ntes', label: 'Station NTES Display' },
     { id: 'passenger-app', label: 'Passenger App (IRCTC)' },
     { id: 'b2b-webhooks', label: 'B2B Webhooks' },
-    { id: 'sla-latency', label: 'SLA & Latency Telemetry' },
     { id: 'visualize', label: 'Visualize' },
     { id: 'agent-mcp', label: 'Agent MCP Integration' }
   ];
