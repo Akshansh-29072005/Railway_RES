@@ -68,11 +68,11 @@ const B2BWebhookView = () => {
       data: {
         trainNumber: train.trainNumber,
         trainName: train.trainName,
-        currentKm: train.currentKm.toFixed(2),
-        currentSpeed: train.currentSpeed.toFixed(1),
-        delayMinutes: train.delayMinutes,
-        etas: Object.keys(train.etas).slice(0, 3).reduce((acc, k) => {
-          acc[k] = train.etas[k].mlStr;
+        currentKm: train.currentKm?.toFixed(2) || "0.00",
+        currentSpeed: train.currentSpeed?.toFixed(1) || "60.0",
+        delayMinutes: train.delayMinutes || 0,
+        etas: Object.keys(train.etas || {}).slice(0, 3).reduce((acc, k) => {
+          acc[k] = train.etas[k]?.mlStr || "On Time";
           return acc;
         }, {})
       }

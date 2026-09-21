@@ -3,10 +3,22 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { STATIONS, TRACK_PATH, MINERAL_CORRIDOR_PATH, BYPASS_PATH, SOUTHERN_LOOPS_PATH, BHILAI_YARD_PATHS, RESTRICTIONS } from '../data/corridorData';
 import { ALL_MAIN_TRACKS, ALL_YARD_TRACKS } from '../data/allTracksData';
+import { getSimulator } from '../services/telemetrySimulator';
+
+// Signal aspect colors
+const SIGNAL_COLORS = {
+  GREEN: '#10b981',
+  YELLOW: '#eab308',
+  DOUBLE_YELLOW: '#f59e0b',
+  RED: '#ef4444'
+};
 
 const MapComponent = () => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const trainMarkersRef = useRef({});
+  const signalMarkersRef = useRef({});
+  const blockPolylinesRef = useRef({});
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -26,64 +38,30 @@ const MapComponent = () => {
     }).addTo(map);
 
     // ── Draw Track Polylines ─────────────────────────────────
-    // The invisible baseline track for the simulator
     L.polyline(TRACK_PATH, {
       color: 'transparent',
       weight: 1,
     }).addTo(map);
 
-    // Draw ALL exact main tracks from OSM (Up, Down, Middle, etc)
     if (ALL_MAIN_TRACKS && ALL_MAIN_TRACKS.length > 0) {
       ALL_MAIN_TRACKS.forEach(track => {
         L.polyline(track, {
-          color: '#ffcba4', // Peach color
+          color: '#ffcba4', 
           weight: 2,
           opacity: 0.8,
         }).addTo(map);
       });
     }
 
-    // Draw ALL yard, siding, and loop tracks from OSM
     if (ALL_YARD_TRACKS && ALL_YARD_TRACKS.length > 0) {
       ALL_YARD_TRACKS.forEach(track => {
         L.polyline(track, {
-          color: '#fff44f', // Lemon yellow
+          color: '#fff44f',
           weight: 1.2,
           opacity: 0.6,
         }).addTo(map);
       });
     }
-
-    // ── Draw TSR/PSR Zones ──────────────────────────────────
-    RESTRICTIONS.forEach(r => {
-      const startFrac = r.fromKm / 40;
-      const endFrac = r.toKm / 40;
-      const startIdx = Math.floor(startFrac * (TRACK_PATH.length - 1));
-      const endIdx = Math.ceil(endFrac * (TRACK_PATH.length - 1));
-      const segment = TRACK_PATH.slice(
-        Math.max(0, startIdx),
-        Math.min(TRACK_PATH.length, endIdx + 1)
-      );
-      if (segment.length >= 2) {
-        L.polyline(segment, {
-          color: r.type === 'TSR' ? '#f59e0b' : '#3b82f6',
-          weight: 6,
-          opacity: 0.7,
-          dashArray: '12, 8',
-        }).addTo(map);
-
-        // TSR label
-        const midIdx = Math.floor(segment.length / 2);
-        L.marker(segment[midIdx], {
-          icon: L.divIcon({
-            className: '',
-            html: `<div style="background:${r.type === 'TSR' ? '#f59e0b' : '#3b82f6'};color:#000;font-size:10px;font-weight:bold;padding:2px 6px;border-radius:4px;white-space:nowrap;">${r.speedLimit} km/h ${r.type}</div>`,
-            iconSize: [80, 20],
-            iconAnchor: [40, 30],
-          }),
-        }).addTo(map);
-      }
-    });
 
     // ── Draw Station Markers ────────────────────────────────
     STATIONS.forEach(station => {
@@ -91,7 +69,6 @@ const MapComponent = () => {
       const size = isJunction ? 14 : 10;
       const borderColor = isJunction ? '#f59e0b' : '#ffffff';
 
-      // Station dot
       L.circleMarker([station.lat, station.lng], {
         radius: size / 2,
         color: borderColor,
@@ -100,7 +77,6 @@ const MapComponent = () => {
         weight: 2,
       }).addTo(map);
 
-      // Station label
       const labelHtml = `
         <div style="
           background: rgba(15, 23, 42, 0.9);
@@ -115,9 +91,6 @@ const MapComponent = () => {
           box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         ">
           ${station.code} · ${station.name}
-          <span style="display:block;font-size:9px;color:#94a3b8;font-weight:400;">
-            km ${station.km} · ${station.platforms} PF${isJunction ? ' · Jn' : ''}
-          </span>
         </div>
       `;
       L.marker([station.lat, station.lng], {
@@ -132,14 +105,130 @@ const MapComponent = () => {
 
     mapInstanceRef.current = map;
 
+    // ── Subscribe to Simulator ──────────────────────────────
+    const sim = getSimulator();
+    sim.start();
+
+    const unsubscribe = sim.subscribe((state) => {
+      updateTrainMarkers(map, state);
+      updateSignalMarkers(map, state);
+      updateBlocks(map, state);
+    });
+
     return () => {
+      unsubscribe();
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
+      trainMarkersRef.current = {};
+      signalMarkersRef.current = {};
+      blockPolylinesRef.current = {};
     };
-  }, []);
+  }, []); // End of useEffect
 
+  // ── Update Blocks ───────────────────────────────────────────
+  function updateBlocks(map, state) {
+    if (!state.blocks) return;
+    state.blocks.forEach(blk => {
+      const color = blk.state === 'OCCUPIED' ? '#ef4444' : '#a855f7';
+      
+      if (blockPolylinesRef.current[blk.id]) {
+        blockPolylinesRef.current[blk.id].setStyle({ color });
+      } else {
+        const startFrac = (blk.startKm - 828.687) / (960.309 - 828.687);
+        const endFrac = (blk.endKm - 828.687) / (960.309 - 828.687);
+        const startIdx = Math.floor(startFrac * (TRACK_PATH.length - 1));
+        const endIdx = Math.ceil(endFrac * (TRACK_PATH.length - 1));
+        
+        const segment = TRACK_PATH.slice(
+          Math.max(0, startIdx),
+          Math.min(TRACK_PATH.length, endIdx + 1)
+        );
+        
+        if (segment.length >= 2) {
+          const polyline = L.polyline(segment, {
+            color: color,
+            weight: 8,
+            opacity: 0.6,
+          }).addTo(map);
+          blockPolylinesRef.current[blk.id] = polyline;
+        }
+      }
+    });
+  }
+
+  // ── Update Train Markers ────────────────────────────────────
+  function updateTrainMarkers(map, state) {
+    const activeTrains = state.trains.filter(t => t.status === 'RUNNING');
+
+    // Remove old
+    Object.keys(trainMarkersRef.current).forEach(tn => {
+      if (!activeTrains.find(t => t.trainNumber === tn)) {
+        map.removeLayer(trainMarkersRef.current[tn]);
+        delete trainMarkersRef.current[tn];
+      }
+    });
+
+    // Update new
+    activeTrains.forEach(train => {
+      if (!train.currentLat || isNaN(train.currentLat) || train.currentLat === 0) return;
+      const html = `
+        <div style="position:relative;cursor:pointer;" title="${train.trainNumber}">
+          <div style="
+            width: 16px; height: 16px;
+            background: ${train.color};
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 8px; font-weight: bold; color: #fff;
+            box-shadow: 0 0 12px ${train.color};
+          "></div>
+        </div>
+      `;
+
+      if (trainMarkersRef.current[train.trainNumber]) {
+        trainMarkersRef.current[train.trainNumber].setLatLng([train.currentLat, train.currentLng]);
+      } else {
+        const marker = L.marker([train.currentLat, train.currentLng], {
+          icon: L.divIcon({ className: '', html, iconSize: [16, 16], iconAnchor: [8, 8] }),
+          zIndexOffset: 1000,
+        }).addTo(map);
+        trainMarkersRef.current[train.trainNumber] = marker;
+      }
+    });
+  }
+
+  // ── Update Signal Markers ───────────────────────────────────
+  function updateSignalMarkers(map, state) {
+    state.signals.forEach(sig => {
+      if (!sig.lat || isNaN(sig.lat) || sig.lat === 0) return;
+
+      const color = SIGNAL_COLORS[sig.aspect] || SIGNAL_COLORS.GREEN;
+      const glowColor = sig.aspect === 'RED' ? '#ef444488' : sig.aspect === 'YELLOW' ? '#eab30888' : '#10b98144';
+
+      const html = `<div style="width:12px;height:12px;background:${color};border-radius:50%;border:2px solid #fff;box-shadow:0 0 12px ${glowColor};"></div>`;
+
+      if (signalMarkersRef.current[sig.id]) {
+        signalMarkersRef.current[sig.id].setIcon(
+          L.divIcon({ className: '', html, iconSize: [12, 12], iconAnchor: [6, 6] })
+        );
+      } else {
+        const marker = L.marker([sig.lat, sig.lng], {
+          icon: L.divIcon({ className: '', html, iconSize: [12, 12], iconAnchor: [6, 6] }),
+          zIndexOffset: 500,
+        }).addTo(map);
+
+        marker.bindTooltip(`<b>${sig.name}</b><br>ID: ${sig.id}<br>Chainage: ${sig.chainage}<br>KM: ${sig.km.toFixed(3)}<br>Type: ${sig.type}`, {
+          direction: 'top',
+          offset: [0, -8],
+          opacity: 0.9,
+        });
+
+        signalMarkersRef.current[sig.id] = marker;
+      }
+    });
+  }
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '500px' }}>
