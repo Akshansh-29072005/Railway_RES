@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { STATIONS, TRACK_PATH, MINERAL_CORRIDOR_PATH, BYPASS_PATH, SOUTHERN_LOOPS_PATH, BHILAI_YARD_PATHS, RESTRICTIONS } from '../data/corridorData';
+import { STATIONS, TRACK_PATH, MINERAL_CORRIDOR_PATH, BYPASS_PATH, SOUTHERN_LOOPS_PATH, BHILAI_YARD_PATHS, RESTRICTIONS, CORRIDOR_BLOCKS, interpolatePosition, getTrackSegment } from '../data/corridorData';
 import { ALL_MAIN_TRACKS, ALL_YARD_TRACKS } from '../data/allTracksData';
 import { getSimulator } from '../services/telemetrySimulator';
 
@@ -24,9 +24,18 @@ const MapComponent = () => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     // ── Initialize Map ──────────────────────────────────────
+    const raipurBounds = L.latLngBounds(
+      [21.240, 81.590], // Southwest (near Saraswati Nagar/Bhilai approach)
+      [21.300, 81.650]  // Northeast (near Urkura)
+    );
+
     const map = L.map(mapRef.current, {
-      center: [21.365, 81.670], // Mandhar (approx middle)
-      zoom: 11,
+      center: [21.2560, 81.6289], // Raipur Jn
+      zoom: 14,
+      minZoom: 13,
+      maxZoom: 22,
+      maxBounds: raipurBounds,
+      maxBoundsViscosity: 1.0,
       scrollWheelZoom: true,
       zoomControl: true,
       attributionControl: false,
@@ -34,7 +43,8 @@ const MapComponent = () => {
 
     // Dark satellite tile layer
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
+      maxZoom: 22,
+      maxNativeZoom: 19,
     }).addTo(map);
 
     // ── Draw Track Polylines ─────────────────────────────────
@@ -62,6 +72,42 @@ const MapComponent = () => {
         }).addTo(map);
       });
     }
+
+    // ── Draw PSRs (Permanent Speed Restrictions) ───────────────
+    RESTRICTIONS.forEach(psr => {
+      if (psr.type === 'PSR') {
+        const segmentPts = getTrackSegment(psr.fromKm, psr.toKm);
+        // Draw a thick orange line for the PSR
+        const psrLine = L.polyline(segmentPts, {
+          color: '#f97316', // Orange
+          weight: 6,
+          opacity: 0.8,
+          dashArray: '5, 5'
+        }).addTo(map);
+
+        // Add a tooltip to the PSR line
+        psrLine.bindTooltip(`<b>${psr.id}</b><br/>Speed Limit: ${psr.speedLimit} KMPH<br/>Reason: ${psr.reason}`, {
+          direction: 'top',
+          sticky: true,
+          className: 'psr-tooltip'
+        });
+      }
+    });
+
+    // ── Draw Block Sections (Static Boundaries) ────────────────
+    CORRIDOR_BLOCKS.forEach(block => {
+      const segmentPts = getTrackSegment(block.startKm, block.endKm);
+      const blockLine = L.polyline(segmentPts, {
+        color: '#6366f1', // Indigo outline
+        weight: 10,
+        opacity: 0.4,
+      }).addTo(map);
+      
+      blockLine.bindTooltip(`<b>${block.id}</b><br/>${block.name}<br/>${block.fromStation} to ${block.toStation}`, {
+        direction: 'center',
+        sticky: true,
+      });
+    });
 
     // ── Draw Station Markers ────────────────────────────────
     STATIONS.forEach(station => {

@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import {
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,45 +7,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import PrimaryButton from "../components/PrimaryButton";
 import { COLORS, RADIUS, SPACING } from "../constants/theme";
 
-const trains = [
-  {
-    number: "12345",
-    name: "Howrah-New Delhi Rajdhani",
-    from: "HWH",
-    to: "NDLS",
-    loco: "WAP-7 30293",
-  },
-  {
-    number: "12301",
-    name: "Howrah-New Delhi Rajdhani",
-    from: "HWH",
-    to: "NDLS",
-    loco: "WAP-7 30321",
-  },
-  {
-    number: "12951",
-    name: "Mumbai-New Delhi Rajdhani",
-    from: "MMCT",
-    to: "NDLS",
-    loco: "WAP-7 30645",
-  },
-  {
-    number: "12002",
-    name: "New Delhi-Bhopal Shatabdi",
-    from: "NDLS",
-    to: "BPL",
-    loco: "WAP-5 30164",
-  },
-];
+const trains: any[] = []; // Ready for backend integration
 
-export default function TrainScreen() {
+export default function SelectTrainScreen() {
   const [search, setSearch] = useState("");
-  const [selectedTrain, setSelectedTrain] = useState(trains[0]);
+  const [selectedTrain, setSelectedTrain] = useState<any>(null);
 
   const filteredTrains = useMemo(() => {
     if (!search.trim()) {
@@ -121,9 +92,15 @@ export default function TrainScreen() {
           {search ? "MATCHING TRAINS" : "ASSIGNED TRAINS"}
         </Text>
 
+        {filteredTrains.length === 0 && (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ color: '#888' }}>No assigned trains found.</Text>
+          </View>
+        )}
+
         {filteredTrains.map((train) => {
           const selected =
-            selectedTrain.number === train.number;
+            selectedTrain?.number === train.number;
 
           return (
             <TouchableOpacity

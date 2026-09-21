@@ -9,8 +9,11 @@ export const STATIONS = [
   { code: 'MAN', name: 'Mandhar', nameHi: 'Mandhar', km: 921.529, lat: 21.3590847, lng: 81.6735434, platforms: 2, haltMin: 2, isJunction: false },
   { code: 'LAK', name: 'Lakholi', nameHi: 'Lakholi', km: 928.99, lat: 21.2156203, lng: 81.8147537, platforms: 2, haltMin: 2, isJunction: false },
   { code: 'MAN', name: 'Mandir Hasaud', nameHi: 'Mandir Hasaud', km: 929.532, lat: 21.2300978, lng: 81.7646708, platforms: 2, haltMin: 2, isJunction: false },
+  { code: 'URK', name: 'Urkura', nameHi: 'उरकुरा', km: 928.9, lat: 21.2891, lng: 81.6447, platforms: 3, haltMin: 2, isJunction: false },
+  { code: 'WRC', name: 'WRS Colony PH', nameHi: 'डब्ल्यू आर एस कॉलोनी', km: 931.2, lat: 21.268, lng: 81.638, platforms: 2, haltMin: 2, isJunction: false },
   { code: 'RAI', name: 'Raipur Block Hut', nameHi: 'Raipur Block Hut', km: 932.468, lat: 21.2651093, lng: 81.6351771, platforms: 2, haltMin: 2, isJunction: false },
-  { code: 'RAI', name: 'Raipur Jn', nameHi: 'Raipur Jn', km: 933.663, lat: 21.2560873, lng: 81.6289031, platforms: 7, haltMin: 2, isJunction: true },
+  { code: 'R', name: 'Raipur Jn', nameHi: 'Raipur Jn', km: 933.663, lat: 21.2560873, lng: 81.6289031, platforms: 7, haltMin: 2, isJunction: true },
+  { code: 'SRWN', name: 'Saraswati Nagar', nameHi: 'सरस्वती नगर', km: 936.5, lat: 21.252, lng: 81.605, platforms: 2, haltMin: 2, isJunction: false },
   { code: 'NAY', name: 'Naya Raipur', nameHi: 'Naya Raipur', km: 934.888, lat: 21.1766286, lng: 81.7667234, platforms: 2, haltMin: 2, isJunction: false },
   { code: 'ABH', name: 'Abhanpur Jn', nameHi: 'Abhanpur Jn', km: 945.961, lat: 21.0752101, lng: 81.7504496, platforms: 2, haltMin: 2, isJunction: true },
   { code: 'BHI', name: 'Bhilai Complex', nameHi: 'Bhilai Complex', km: 952.927, lat: 21.2048506, lng: 81.3901506, platforms: 2, haltMin: 2, isJunction: true },
@@ -1567,12 +1570,37 @@ export const SIGNALS = [];
 
 export const RESTRICTIONS = [
   {
-    id: 'TSR-447',
-    type: 'TSR',
-    fromKm: 830.0,
-    toKm: 832.0,
+    id: 'PSR-SRWN-APP',
+    type: 'PSR',
+    fromKm: 935.5,
+    toKm: 936.5,
     speedLimit: 30,
+    reason: 'Sharp Curve & Station Approach (Saraswati Nagar)'
+  },
+  {
+    id: 'PSR-R-JN-X',
+    type: 'PSR',
+    fromKm: 933.0,
+    toKm: 934.0,
+    speedLimit: 15,
+    reason: 'Complex Turnout & Yard Crossover (Raipur Jn)'
+  },
+  {
+    id: 'PSR-URK-YARD',
+    type: 'PSR',
+    fromKm: 928.5,
+    toKm: 929.5,
+    speedLimit: 30,
+    reason: 'Urkura Yard Points'
   }
+];
+
+export const CORRIDOR_BLOCKS = [
+  { id: 'BLK-SRWN', name: 'Saraswati Nagar Main', fromStation: 'SRWN', toStation: 'R', startKm: 936.5, endKm: 935.0 },
+  { id: 'BLK-R-WEST', name: 'Raipur West Approach', fromStation: 'SRWN', toStation: 'R', startKm: 935.0, endKm: 934.0 },
+  { id: 'BLK-R-YARD', name: 'Raipur Junction Yard', fromStation: 'R', toStation: 'R', startKm: 934.0, endKm: 933.0 },
+  { id: 'BLK-WRC', name: 'WRS Colony Block', fromStation: 'R', toStation: 'URK', startKm: 933.0, endKm: 931.0 },
+  { id: 'BLK-URK', name: 'Urkura Main Block', fromStation: 'WRC', toStation: 'URK', startKm: 931.0, endKm: 928.5 }
 ];
 
 export const TRAINS = [
@@ -1682,24 +1710,107 @@ export function getStation(code) {
 }
 
 /** Interpolate position along TRACK_PATH given km value */
+/** Precompute cumulative distances for TRACK_PATH */
+function haversineDist(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+// Map each station to the closest index in TRACK_PATH
+const anchorPoints = STATIONS.filter(s => s.km >= 828 && s.km <= 965).map(station => {
+  let minD = Infinity;
+  let minIdx = -1;
+  for (let i = 0; i < TRACK_PATH.length; i++) {
+    const d = haversineDist(station.lat, station.lng, TRACK_PATH[i][0], TRACK_PATH[i][1]);
+    if (d < minD) {
+      minD = d;
+      minIdx = i;
+    }
+  }
+  return { ...station, pathIdx: minIdx, minD };
+});
+anchorPoints.sort((a, b) => a.km - b.km);
+
+/** Interpolate position along TRACK_PATH given km value */
 export function interpolatePosition(km) {
-  const startKm = 828.687;
-  const endKm = 960.309;
-  const totalKm = endKm - startKm;
-  const fraction = Math.max(0, Math.min(1, (km - startKm) / totalKm));
-  const pathIndex = Math.min(
-    Math.floor(fraction * (TRACK_PATH.length - 1)),
-    TRACK_PATH.length - 2
-  );
-  const localFraction = (fraction * (TRACK_PATH.length - 1)) - pathIndex;
+  if (km <= anchorPoints[0].km) return { lat: anchorPoints[0].lat, lng: anchorPoints[0].lng };
+  if (km >= anchorPoints[anchorPoints.length - 1].km) return { lat: anchorPoints[anchorPoints.length - 1].lat, lng: anchorPoints[anchorPoints.length - 1].lng };
+
+  let startAnchor, endAnchor;
+  for (let i = 0; i < anchorPoints.length - 1; i++) {
+    if (km >= anchorPoints[i].km && km <= anchorPoints[i+1].km) {
+      startAnchor = anchorPoints[i];
+      endAnchor = anchorPoints[i+1];
+      break;
+    }
+  }
+
+  if (!startAnchor || !endAnchor) {
+    return { lat: TRACK_PATH[0][0], lng: TRACK_PATH[0][1] };
+  }
+
+  let startIdx = startAnchor.pathIdx;
+  let endIdx = endAnchor.pathIdx;
+  
+  if (startIdx === endIdx) {
+    return { lat: TRACK_PATH[startIdx][0], lng: TRACK_PATH[startIdx][1] };
+  }
+  
+  if (startIdx > endIdx) {
+    const t = startIdx; startIdx = endIdx; endIdx = t;
+  }
+
+  const fraction = (km - startAnchor.km) / (endAnchor.km - startAnchor.km);
+  
+  let totalSegDist = 0;
+  const segDistances = [0];
+  for (let i = startIdx + 1; i <= endIdx; i++) {
+    const d = haversineDist(TRACK_PATH[i-1][0], TRACK_PATH[i-1][1], TRACK_PATH[i][0], TRACK_PATH[i][1]);
+    totalSegDist += d;
+    segDistances.push(totalSegDist);
+  }
+
+  const targetDist = fraction * totalSegDist;
+  let pIdx = 0;
+  for (let i = 0; i < segDistances.length - 1; i++) {
+    if (targetDist >= segDistances[i] && targetDist <= segDistances[i+1]) {
+      pIdx = i;
+      break;
+    }
+  }
+
+  const distInP = targetDist - segDistances[pIdx];
+  const pLength = segDistances[pIdx+1] - segDistances[pIdx];
+  const pFraction = pLength === 0 ? 0 : distInP / pLength;
+  
+  const realIdx = startIdx + pIdx;
   return {
-    lat: TRACK_PATH[pathIndex][0] + (TRACK_PATH[pathIndex + 1][0] - TRACK_PATH[pathIndex][0]) * localFraction,
-    lng: TRACK_PATH[pathIndex][1] + (TRACK_PATH[pathIndex + 1][1] - TRACK_PATH[pathIndex][1]) * localFraction,
+    lat: TRACK_PATH[realIdx][0] + (TRACK_PATH[realIdx+1][0] - TRACK_PATH[realIdx][0]) * pFraction,
+    lng: TRACK_PATH[realIdx][1] + (TRACK_PATH[realIdx+1][1] - TRACK_PATH[realIdx][1]) * pFraction
   };
 }
 
 export function interpolatePositionUp(km) {
-  const startKm = 828.687;
-  const endKm = 960.309;
-  return interpolatePosition(endKm - (km - startKm));
+  return interpolatePosition(km);
+}
+
+/** Get an array of lat/lng points along the track between two KMs */
+export function getTrackSegment(km1, km2) {
+  const points = [];
+  const start = Math.min(km1, km2);
+  const end = Math.max(km1, km2);
+  // Sample 20 points per kilometer to accurately trace curves
+  const numSegments = Math.max(5, Math.floor((end - start) * 20));
+  for (let i = 0; i <= numSegments; i++) {
+    const km = start + (i / numSegments) * (end - start);
+    const pos = interpolatePosition(km);
+    points.push([pos.lat, pos.lng]);
+  }
+  return points;
 }

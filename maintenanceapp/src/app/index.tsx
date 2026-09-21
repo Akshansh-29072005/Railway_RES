@@ -40,13 +40,13 @@ export default function LoginScreen() {
     */
 
     if (
-      railwayId.trim().toUpperCase() === "LP12345" &&
+      railwayId.trim().toUpperCase() === "ENG123" &&
       password === "railway123"
     ) {
-      router.replace("/train");
+      router.replace("/report");
     } else {
       setError(
-        "Invalid Railway ID or password. Use LP12345 / railway123 for demo."
+        "Invalid Railway ID or password. Use ENG123 / railway123 for demo."
       );
     }
   };
@@ -63,20 +63,20 @@ export default function LoginScreen() {
         >
           <View style={styles.logoContainer}>
             <View style={styles.logoCircle}>
-              <Text style={styles.logoTrain}>🚆</Text>
+              <Text style={styles.logoTrain}>🛠️</Text>
             </View>
           </View>
 
-          <Text style={styles.brand}>GUARD APP</Text>
+          <Text style={styles.brand}>MAINTENANCE APP</Text>
           <Text style={styles.title}>Portal</Text>
 
           <Text style={styles.description}>
-            Secure access to railway operations,
-            duty information and live location tracking.
+            Secure access to railway engineering operations,
+            real-time block tracking and incident reporting.
           </Text>
 
           <View style={styles.loginCard}>
-            <Text style={styles.cardTitle}>Railway GUARD Login</Text>
+            <Text style={styles.cardTitle}>Engineering Staff Login</Text>
 
             <Text style={styles.label}>RAILWAY ID</Text>
 
@@ -126,7 +126,7 @@ export default function LoginScreen() {
             />
 
             <Text style={styles.demoText}>
-              Demo: LP12345 / railway123
+              Demo: ENG123 / railway123
             </Text>
           </View>
 
