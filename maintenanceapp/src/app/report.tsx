@@ -40,7 +40,7 @@ export default function ReportScreen() {
   const [block, setBlock] = useState(CORRIDOR_BLOCKS[0].id);
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!duration || !fromStation || !toStation || !block) {
       Alert.alert("Missing Fields", "Please complete all fields before logging this incident.");
       return;
@@ -48,15 +48,35 @@ export default function ReportScreen() {
 
     setSubmitting(true);
     
-    // Simulate API call to ML ETA engine
-    setTimeout(() => {
+    try {
+      // Use EXPO_PUBLIC_API_URL or fallback to localhost
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";
+      const response = await fetch(`${apiUrl}/api/maintenance/record`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: selectedType,
+          expected_time: parseInt(duration) || 60,
+          section_block: block,
+          status: "ongoing",
+          impact: selectedImpact
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to record maintenance.");
+      }
+
       setSubmitting(false);
       Alert.alert(
         "Report Published",
-        "The maintenance block has been broadcasted to the network. The ETA ML Engine has recalculated the affected corridors.",
+        "The maintenance block has been broadcasted to the network. ETA Engine and Maps are updated.",
         [{ text: "Back to Dashboard", onPress: () => router.replace("/dashboard") }]
       );
-    }, 1500);
+    } catch (e) {
+      setSubmitting(false);
+      Alert.alert("Error", e.message || "Could not reach the server.");
+    }
   };
 
   return (
@@ -66,7 +86,7 @@ export default function ReportScreen() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <TouchableOpacity onPress={() => router.replace("/dashboard")} style={styles.backBtn}>
             <Text style={styles.backBtnText}>← BACK</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>New Maintenance</Text>

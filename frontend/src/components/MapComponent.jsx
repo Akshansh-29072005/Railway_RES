@@ -177,7 +177,15 @@ const MapComponent = () => {
   function updateBlocks(map, state) {
     if (!state.blocks) return;
     state.blocks.forEach(blk => {
-      const color = blk.state === 'OCCUPIED' ? '#ef4444' : '#a855f7';
+      let isUnderMaintenance = false;
+      if (state.activeMaintenance) {
+         isUnderMaintenance = state.activeMaintenance.some(m => m.section_block === blk.id);
+      }
+      
+      let color = blk.state === 'OCCUPIED' ? '#ef4444' : '#a855f7';
+      if (isUnderMaintenance) {
+         color = '#f97316'; // Flashing Orange/Warning for maintenance
+      }
       
       if (blockPolylinesRef.current[blk.id]) {
         blockPolylinesRef.current[blk.id].setStyle({ color });
@@ -233,6 +241,24 @@ const MapComponent = () => {
         </div>
       `;
 
+      const [h, m] = train.scheduledTime ? train.scheduledTime.split(":").map(Number) : [0,0];
+      const date = new Date();
+      date.setHours(h, m, 0, 0);
+      date.setMinutes(date.getMinutes() + Math.round(train.delayMinutes));
+      const eta = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+
+      const popupContent = `
+        <div style="font-family: sans-serif; color: #333;">
+          <h4 style="margin: 0 0 4px 0; color: ${train.color}">${train.trainName}</h4>
+          <p style="margin: 2px 0;"><strong>Train No:</strong> ${train.trainNumber}</p>
+          <p style="margin: 2px 0;"><strong>Speed:</strong> ${train.currentSpeed || 0} km/h</p>
+          <p style="margin: 2px 0;"><strong>Scheduled Time:</strong> ${train.scheduledTime || 'N/A'}</p>
+          <p style="margin: 2px 0;"><strong>Predicted ETA:</strong> ${eta}</p>
+          <p style="margin: 2px 0;"><strong>Delay:</strong> ${Math.round(train.delayMinutes)} mins</p>
+          <p style="margin: 2px 0; color: #ef4444;"><strong>Status:</strong> ${train.delayMinutes > 0 ? 'Delayed due to Maintenance' : 'On Time'}</p>
+        </div>
+      `;
+
       if (trainMarkersRef.current[train.trainNumber]) {
         trainMarkersRef.current[train.trainNumber].setLatLng([train.currentLat, train.currentLng]);
       } else {
@@ -240,7 +266,15 @@ const MapComponent = () => {
           icon: L.divIcon({ className: '', html, iconSize: [16, 16], iconAnchor: [8, 8] }),
           zIndexOffset: 1000,
         }).addTo(map);
+
+        marker.bindPopup(popupContent);
+        
         trainMarkersRef.current[train.trainNumber] = marker;
+      }
+      
+      // Update popup content continuously if open
+      if (trainMarkersRef.current[train.trainNumber].isPopupOpen()) {
+        trainMarkersRef.current[train.trainNumber].getPopup().setContent(popupContent);
       }
     });
   }

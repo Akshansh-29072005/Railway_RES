@@ -1,4 +1,4 @@
-import { TRAINS, interpolatePosition, interpolatePositionUp } from '../data/corridorData';
+import { TRAINS, interpolatePosition, interpolatePositionUp, CORRIDOR_BLOCKS } from '../data/corridorData';
 import { CABLE_PLAN_SIGNALS, chainageToKm } from '../data/cablePlanData';
 
 const DEFAULT_TICK_INTERVAL_MS = 1000;
@@ -36,20 +36,40 @@ export class SimulationEngine {
       });
     }
 
-    // Initialize trains
-    TRAINS.forEach((train, i) => {
-      this.trains.push({
-        trainNumber: train.number,
-        trainName: train.name,
-        color: train.color,
-        direction: train.direction,
-        currentKm: train.direction === 'DN' ? 828 - (i*5) : 960 + (i*5),
-        status: 'RUNNING',
-        currentLat: 0,
-        currentLng: 0,
-        delayMinutes: 0
-      });
-    });
+    // Initialize 4 Demo Trains
+    this.trains = [
+      {
+        trainNumber: '12808', trainName: 'Samta Express (SRWN->UKR)', color: '#3b82f6',
+        direction: 'UP', currentKm: 936.5, status: 'RUNNING',
+        currentLat: 0, currentLng: 0, delayMinutes: 0, scheduledTime: "14:30"
+      },
+      {
+        trainNumber: '12102', trainName: 'Jnaneswari Deluxe (Standing at R)', color: '#ef4444',
+        direction: 'DN', currentKm: 933.6, status: 'STANDING',
+        currentLat: 0, currentLng: 0, delayMinutes: 0, scheduledTime: "14:45"
+      },
+      {
+        trainNumber: '12833', trainName: 'Howrah Express (UKR->SRWN)', color: '#eab308',
+        direction: 'DN', currentKm: 928.9, status: 'RUNNING',
+        currentLat: 0, currentLng: 0, delayMinutes: 0, scheduledTime: "15:00"
+      },
+      {
+        trainNumber: '22815', trainName: 'Ernakulam Express (Random)', color: '#10b981',
+        direction: 'UP', currentKm: 950.0, status: 'RUNNING',
+        currentLat: 0, currentLng: 0, delayMinutes: 0, scheduledTime: "15:15"
+      }
+    ];
+
+    this.activeMaintenance = [];
+    // Start polling backend for maintenance every 2 seconds
+    setInterval(async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/maintenance/active");
+        if (res.ok) {
+           this.activeMaintenance = await res.json();
+        }
+      } catch (e) {}
+    }, 2000);
   }
 
   start() {
@@ -84,7 +104,8 @@ export class SimulationEngine {
       signals: this.signals,
       blocks: this.blocks,
       isPaused: this.isPaused,
-      simTimeStr: '14:00'
+      simTimeStr: '14:00',
+      activeMaintenance: this.activeMaintenance
     };
   }
 
@@ -97,7 +118,23 @@ export class SimulationEngine {
     // 1. Move trains
     this.trains.forEach(t => {
       if (t.status === 'RUNNING') {
-        const speedKmph = 60; 
+        let speedKmph = 20; // Default slow demo speed
+
+        const inMaintenance = this.activeMaintenance.some(m => {
+          const block = CORRIDOR_BLOCKS.find(b => b.id === m.section_block);
+          if (block) {
+            return t.currentKm >= Math.min(block.startKm, block.endKm) && 
+                   t.currentKm <= Math.max(block.startKm, block.endKm);
+          }
+          return false;
+        });
+
+        if (inMaintenance) {
+          speedKmph = 5; // Severe speed restriction
+          t.delayMinutes += 0.05; // Dynamically increase delay!
+        }
+
+        t.currentSpeed = speedKmph; // Save speed for UI
         const distKm = (speedKmph / 3600); // dist per second
         
         if (t.direction === 'DN') {

@@ -43,7 +43,7 @@ export default function LoginScreen() {
       railwayId.trim().toUpperCase() === "ENG123" &&
       password === "railway123"
     ) {
-      router.replace("/report");
+      router.replace("/dashboard");
     } else {
       setError(
         "Invalid Railway ID or password. Use ENG123 / railway123 for demo."

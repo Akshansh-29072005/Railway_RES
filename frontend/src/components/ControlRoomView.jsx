@@ -50,11 +50,17 @@ const ControlRoomView = () => {
     { id: 'BQR-DURG', label: 'BQR → DURG' }
   ];
 
-  const endpoints = [
+  const incomingEndpoints = [
     { method: 'POST', path: '/api/v2.4/control-room/section-occupancy', desc: 'Real-time block tracking', color: '#10b981' },
     { method: 'GET', path: '/api/v2.4/control-room/signal-aspect-feed', desc: 'Live ABS signal states', color: '#3b82f6' },
     { method: 'GET', path: '/api/v2.4/control-room/block-restriction-log', desc: 'TSR/PSR active list', color: '#3b82f6' },
     { method: 'WSS', path: '/api/v2.4/control-room/telemetry-stream', desc: 'Sub-second GPS feed', color: '#a855f7' }
+  ];
+
+  const outgoingEndpoints = [
+    { method: 'WSS', path: '/api/v2.4/system/live-eta-predictions', desc: 'Data-driven ETA updates & platform predictions with confidence', color: '#a855f7' },
+    { method: 'POST', path: '/api/v2.4/system/dynamic-dispatch-alerts', desc: 'Conflict alerts & data-driven speed adjustments', color: '#10b981' },
+    { method: 'GET', path: '/api/v2.4/system/network-analytics', desc: 'Aggregated analytics and delay propagation forecasting', color: '#3b82f6' }
   ];
 
   const getSignalColor = (aspect) => {
@@ -152,17 +158,34 @@ const ControlRoomView = () => {
 
       <div className="flex flex-col lg:flex-row gap-6">
         
-        {/* BOTTOM LEFT — AVAILABLE API ENDPOINTS */}
-        <div className="flex-1 bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-sm p-6">
+        {/* BOTTOM LEFT — API ENDPOINTS */}
+        <div className="flex-1 bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-sm p-6 overflow-y-auto max-h-[300px]">
           <h2 className="m-0 mb-4 text-base font-bold text-primary border-b border-outline-variant/30 pb-3">CONTROL ROOM API ENDPOINTS</h2>
-          <div className="flex flex-col gap-3">
-            {endpoints.map((ep, idx) => (
+          
+          <h3 className="m-0 mb-3 text-sm font-bold text-on-surface">Data Sources (From Railways)</h3>
+          <div className="flex flex-col gap-3 mb-6">
+            {incomingEndpoints.map((ep, idx) => (
               <div key={idx} className="flex items-center gap-4 bg-surface p-3 rounded-lg border border-outline-variant/30">
                 <div style={{ backgroundColor: ep.color }} className="text-white text-xs font-bold px-2 py-1 rounded w-12 text-center">
                   {ep.method}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="font-mono text-sm text-on-surface font-semibold">{ep.path}</span>
+                  <span className="font-mono text-xs text-on-surface font-semibold">{ep.path}</span>
+                  <span className="text-xs text-on-surface-variant">{ep.desc}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="m-0 mb-3 text-sm font-bold text-on-surface">Outputs (To Railways)</h3>
+          <div className="flex flex-col gap-3">
+            {outgoingEndpoints.map((ep, idx) => (
+              <div key={idx} className="flex items-center gap-4 bg-surface p-3 rounded-lg border border-outline-variant/30">
+                <div style={{ backgroundColor: ep.color }} className="text-white text-xs font-bold px-2 py-1 rounded w-12 text-center">
+                  {ep.method}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-xs text-on-surface font-semibold">{ep.path}</span>
                   <span className="text-xs text-on-surface-variant">{ep.desc}</span>
                 </div>
               </div>

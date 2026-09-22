@@ -13,7 +13,12 @@ import { router } from "expo-router";
 import PrimaryButton from "../components/PrimaryButton";
 import { COLORS, RADIUS, SPACING } from "../constants/theme";
 
-const trains: any[] = []; // Ready for backend integration
+const trains: any[] = [
+  { id: "1", number: "12808", name: "Samta Express", from: "SRWN", to: "UKR", loco: "WAP-7" },
+  { id: "2", number: "12102", name: "Jnaneswari Deluxe", from: "LTT", to: "SHM", loco: "WAP-7" },
+  { id: "3", number: "12833", name: "Howrah Express", from: "UKR", to: "SRWN", loco: "WAP-4" },
+  { id: "4", number: "22815", name: "Ernakulam Express", from: "BSP", to: "ERS", loco: "WAP-4" }
+];
 
 export default function SelectTrainScreen() {
   const [search, setSearch] = useState("");
@@ -34,6 +39,7 @@ export default function SelectTrainScreen() {
   }, [search]);
 
   const continueToGPS = () => {
+    if (!selectedTrain) return;
     router.push({
       pathname: "/gps",
       params: {
@@ -157,36 +163,44 @@ export default function SelectTrainScreen() {
             SELECTED TRAIN
           </Text>
 
-          <Text style={styles.selectedNumber}>
-            {selectedTrain.number}
-          </Text>
-
-          <Text style={styles.selectedName}>
-            {selectedTrain.name}
-          </Text>
-
-          <View style={styles.detailsRow}>
-            <View>
-              <Text style={styles.detailLabel}>FROM</Text>
-              <Text style={styles.detailValue}>
-                {selectedTrain.from}
+          {selectedTrain ? (
+            <>
+              <Text style={styles.selectedNumber}>
+                {selectedTrain.number}
               </Text>
-            </View>
 
-            <View>
-              <Text style={styles.detailLabel}>TO</Text>
-              <Text style={styles.detailValue}>
-                {selectedTrain.to}
+              <Text style={styles.selectedName}>
+                {selectedTrain.name}
               </Text>
-            </View>
 
-            <View>
-              <Text style={styles.detailLabel}>LOCO</Text>
-              <Text style={styles.detailValue}>
-                {selectedTrain.loco}
-              </Text>
-            </View>
-          </View>
+              <View style={styles.detailsRow}>
+                <View>
+                  <Text style={styles.detailLabel}>FROM</Text>
+                  <Text style={styles.detailValue}>
+                    {selectedTrain.from}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={styles.detailLabel}>TO</Text>
+                  <Text style={styles.detailValue}>
+                    {selectedTrain.to}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={styles.detailLabel}>LOCO</Text>
+                  <Text style={styles.detailValue}>
+                    {selectedTrain.loco}
+                  </Text>
+                </View>
+              </View>
+            </>
+          ) : (
+            <Text style={{ marginTop: 10, color: "#fff" }}>
+              Please select a train from the list.
+            </Text>
+          )}
         </View>
 
         <PrimaryButton

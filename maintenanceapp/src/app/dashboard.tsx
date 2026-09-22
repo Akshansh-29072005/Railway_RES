@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,17 +9,43 @@ import {
   Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 import { COLORS, RADIUS, SPACING } from "../constants/theme";
 
-// Ready for backend integration
-const MOCK_DATA: any[] = [];
-
 export default function DashboardScreen() {
   const [activeTab, setActiveTab] = useState<"ongoing" | "planned">("ongoing");
-  const [tasks, setTasks] = useState(MOCK_DATA);
+  const [tasks, setTasks] = useState<any[]>([]);
   const [selectedTask, setSelectedTask] = useState<any>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+    }, [])
+  );
+
+  const fetchTasks = async () => {
+    try {
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";
+      const res = await fetch(`${apiUrl}/api/maintenance/active`);
+      if (res.ok) {
+        const data = await res.json();
+        // Map backend format to UI format
+        const formatted = data.map((d: any) => ({
+          id: d.id.toString(),
+          type: d.type,
+          status: d.status,
+          section: "Raipur Division",
+          block: d.section_block,
+          startTime: new Date(d.created_at).toLocaleTimeString(),
+          impact: d.impact
+        }));
+        setTasks(formatted);
+      }
+    } catch (e) {
+      console.log("Fetch error:", e);
+    }
+  };
 
   const filteredTasks = tasks.filter(t => t.status === activeTab);
 
@@ -32,9 +58,23 @@ export default function DashboardScreen() {
         { 
           text: "End Now", 
           style: "destructive",
-          onPress: () => {
-            setTasks(prev => prev.filter(t => t.id !== id));
-            setSelectedTask(null);
+          onPress: async () => {
+            try {
+              const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080";
+              const res = await fetch(`${apiUrl}/api/maintenance/end/${id}`, {
+                method: "PUT",
+              });
+              if (res.ok) {
+                // Remove from local state
+                setTasks(prev => prev.filter(t => t.id !== id));
+                setSelectedTask(null);
+                Alert.alert("Success", "Maintenance block ended and ETA recalculated.");
+              } else {
+                throw new Error("Failed to end maintenance");
+              }
+            } catch (e) {
+              Alert.alert("Error", e.message || "Failed to contact server");
+            }
           }
         }
       ]
